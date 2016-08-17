@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>Lp.mo</name>
+	<iface>0</iface>
+	<defaultDir>/Output/</defaultDir>
+	<function>
+		<name>mods</name>
+		<command>!mods</command>
+		<noargs>true</noargs>
+		<fnum>0.1</fnum>
+		<helpUse>Usage: mods</helpUse>
+		<helpText>The mods command will list all of the currently loaded modules.</helpText>
+	</function>
+	
+	<function>
+		<name>stat</name>
+		<command>!stat</command>
+		<noargs>true</noargs>
+		<fnum>0.2</fnum>
+        <errors>
+            <errorEnt>
+                <errorStr>No Active Session</errorStr>
+                <errorMsg>No Active Session</errorMsg>
+            </errorEnt>
+        </errors>
+		<helpUse>Usage: stat</helpUse>
+		<helpText>The stat command will print the status of the Lp's connection to the implant.  It will also print the status of any currently active RPCs.</helpText>
+	</function>
+	
+	<function>
+		<name>open</name>
+		<command>!open</command>
+		<nodisplay>true</nodisplay>
+		<fnum>0.3</fnum>
+		<prompt>dstip</prompt>
+		<prompt>dstport</prompt>
+		<prompt>srcip</prompt>
+		<prompt>srcport</prompt>
+		<prompt>keyfile</prompt>
+        <errors>
+            <errorEnt>
+                <errorStr>bad file</errorStr>
+                <errorMsg>Keyfile not found</errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>invalid file</errorStr>
+                <errorMsg>Keyfile was not valid</errorMsg>
+            </errorEnt>
+        </errors>
+		<helpUse>Usage: open [dstip &lt;dstip&gt; dstport &lt;dstport&gt; srcip &lt;srcip&gt; srcport &lt;srcport&gt; keyfile &lt;path to keyfile&gt;]</helpUse>
+		<helpText>The open command is used to open a connection between the LP and an implant.  Use open without arguments to enable prompts for the necessary information.</helpText>
+	</function>
+	
+	<function>
+		<name>port</name>
+		<command>!port</command>
+		<nodisplay>true</nodisplay>
+		<fnum>0.4</fnum>
+		<prompt>outport</prompt>
+		<helpUse>Usage: port [outport &lt;outport&gt;]</helpUse>
+		<helpText>The port command is used to change the port that the LP sends messages to be printed.  Use port without arguments to enable prompts for the necessary information.  Note that changing this port from the default of 1338 will prevent messages from the LP from being displayed.</helpText>
+	</function>
+	
+	<function>
+		<name>rent</name>
+		<command>!rent</command>
+		<nodisplay>true</nodisplay>
+		<fnum>0.5</fnum>
+        <errors>
+            <errorEnt>
+                <errorStr>Route Entry Failed: 5</errorStr>
+                <errorMsg>Failed to create route entry.</errorMsg>
+            </errorEnt>
+        </errors>
+		<prompt>network</prompt>
+		<prompt>netmask</prompt>
+		<prompt>gateway</prompt>
+		<helpUse>Usage: rent network &lt;network address&gt; netmask &lt;netmask&gt; gateway &lt;gateway&gt;</helpUse>
+		<helpText>The rent command is used to add a new route entry.</helpText>
+	</function>
+	
+	<function>
+		<name>term</name>
+		<command>!term</command>
+		<nodisplay>true</nodisplay>
+		<fnum>0.6</fnum>
+		<noargs>true</noargs>
+		<helpUse>Usage: term</helpUse>
+		<helpText>The term command will immediatly terminate the connection between the LP and implant.</helpText>
+	</function>
+	
+	<function>
+		<name>lpex</name>
+		<command>!lpex</command>
+		<nodisplay>true</nodisplay>
+		<fnum>0.7</fnum>
+        <prompt>lpexfile</prompt>
+		<noargs>false</noargs>
+        <errors>
+            <errorEnt>
+                <errorStr>lpex already loaded</errorStr>
+                <errorMsg></errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>couldn't load lpex</errorStr>
+                <errorMsg>The Backend encountered an error while loading an lp extension</errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>bad file</errorStr>
+                <errorMsg>The specified lp extension file could not be found.</errorMsg>
+            </errorEnt>
+        </errors>
+
+		<helpUse>Usage: lpex lpexfile &lt;path to lpex file&gt;</helpUse>
+		<helpText>The lpex command is used to load an lp extenstion.</helpText>
+	</function>
+	
+</module>

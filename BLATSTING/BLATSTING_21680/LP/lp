@@ -1,0 +1,4 @@
+#!/bin/bash
+
+LD_LIBRARY_PATH=`dirname $0`/lpconfig/lplib `dirname $0`/lpexe $*
+

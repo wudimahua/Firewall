@@ -1,0 +1,4 @@
+#this is a filter to get all icmp traffic
+filter:ip proto \tcp
+netmask:255.255.0.0
+

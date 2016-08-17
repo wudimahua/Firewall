@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>PlatNetwork.mo</name>
+	<iface>16</iface>
+	
+	<function>
+		<name>getDevices</name>
+		<command>!call</command>
+		<fnum>16.1</fnum>
+		<prompt value='16'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='7'>cfunc</prompt>
+		<helpUse>Usage: getDevices</helpUse>
+		<helpText>The getDevices command will list all of the network devices on the target.</helpText>
+	</function>
+	
+</module>

@@ -1,0 +1,22 @@
+There are 14 section headers, starting at offset 0x7cc0:
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .got_loader       PROGBITS        00000000 001000 00006d 00  AX  0   0  4
+  [ 2] .got              PROGBITS        00000070 001070 000060 04  WA  0   0  4
+  [ 3] .text             PROGBITS        000000d0 0010d0 00630d 00  AX  0   0 16
+  [ 4] .gnu.linkonce.t._ PROGBITS        000063dd 0073dd 000004 00  AX  0   0  1
+  [ 5] .gnu.linkonce.t._ PROGBITS        000063e1 0073e1 000004 00  AX  0   0  1
+  [ 6] .bss              NOBITS          000063e8 0073e5 000008 00  WA  0   0  4
+  [ 7] .data             PROGBITS        00006400 007400 0004cc 00  WA  0   0 32
+  [ 8] .rodata           PROGBITS        000068e0 0078e0 000327 00   A  0   0 32
+  [ 9] .got.plt          NOBITS          00006c08 007c07 00000c 04  WA  0   0  4
+  [10] .note.GNU-stack   PROGBITS        00000000 007c13 000000 00      0   0  1
+  [11] .shstrtab         STRTAB          00000000 007c13 0000ac 00      0   0  1
+  [12] .symtab           SYMTAB          00000000 007ef0 000bd0 10     13  89  4
+  [13] .strtab           STRTAB          00000000 008ac0 0007c4 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)

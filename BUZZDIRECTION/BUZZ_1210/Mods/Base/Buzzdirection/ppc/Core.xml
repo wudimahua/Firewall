@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>Core.mo</name>
+	<iface>2</iface>
+	
+	<function>
+		<name>load</name>
+		<command>!call</command>
+		<fnum>2.1</fnum>
+        <useSwitch>1</useSwitch>
+        <useDirList>1</useDirList>
+        <checkForCfg>1</checkForCfg>
+        <errors>
+            <errorEnt>
+                <errorStr>bad file</errorStr>
+                <errorMsg>Specified module file was not found.</errorMsg>
+            </errorEnt>
+        </errors>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='10'>cfunc</prompt>
+        <switch>
+            <sprompt>Enable Persistence?  Y/N: </sprompt>
+            <switchOpt>
+                <input>Yy</input>
+                <setValue value='1'>onreboot</setValue>
+                <setValue value='1'>store</setValue>
+                <setValue value='1'>now</setValue>
+            </switchOpt>
+            <switchOpt>
+                <input>Nn</input>
+                <setValue value='0'>onreboot</setValue>
+                <setValue value='0'>store</setValue>
+                <setValue value='1'>now</setValue>
+            </switchOpt>
+        </switch>
+        <dirList>
+            <prePrint>Available Modules:</prePrint>
+            <listPrompt>Enter the number of the module to load: </listPrompt>
+            <fileEx>.mo</fileEx>
+            <prependCWD>1</prependCWD>
+            <appendImplantArch>1</appendImplantArch>
+            <baseDir>/../Mods/App/</baseDir>
+            <promptToSet>modfile</promptToSet>
+            <showIfaceNumbers>1</showIfaceNumbers>
+            <modNameSplitChar>_</modNameSplitChar>
+            <requireXml>1</requireXml>
+            <recurse>1</recurse>
+        </dirList>
+		<prompt>modfile</prompt>
+		<prompt>onreboot</prompt>
+		<prompt>store</prompt>
+		<prompt>now</prompt>
+		<helpUse>Usage: load [modfile &lt;path to modfile&gt; onreboot &lt;onreboot&gt; store &lt;store&gt; now &lt;now&gt;]</helpUse>
+		<helpText>The load command is used to load the module located at the specified path.</helpText>
+	</function>
+	
+	<function>
+		<name>unload</name>
+		<command>!call</command>
+		<fnum>2.2</fnum>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='11'>cfunc</prompt>
+		<prompt>iface</prompt>
+		<prompt>prov</prompt>
+        <printFunctionOnComplete>mods</printFunctionOnComplete>
+		<helpUse>Usage: unload iface &lt;iface index&gt; prov &lt;prov&gt;</helpUse>
+		<helpText>The unload command is used to unload a module specified by iface and prov.</helpText>
+	</function>
+	
+	<function>
+		<name>uptime</name>
+		<command>!call</command>
+		<fnum>2.3</fnum>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='0'>cprov</prompt>
+		<prompt value='15'>cfunc</prompt>
+		<helpUse>Usage: uptime</helpUse>
+		<helpText>The uptime command will display the uptime of the implant.</helpText>
+	</function>
+	
+	<function>
+		<name>uninstallForever</name>
+		<command>!call</command>
+		<noargs>1</noargs>
+        <confirm>1</confirm>
+		<fnum>2.4</fnum>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='14'>cfunc</prompt>
+		<prompt value='0'>now</prompt>
+		<prompt value='0'>nextboot</prompt>
+		<prompt value='0'>store</prompt>
+		<prompt value='1'>unload</prompt>
+		<prompt value='none'>upfile</prompt>
+		<helpUse>Usage: uninstallForever</helpUse>
+		<helpText>The uninstallForever command will immediatly terminate and uninstall the implant, forever.</helpText>
+	</function>
+	
+	<function>
+		<name>upgrade</name>
+		<command>!call</command>
+		<noargs>0</noargs>
+        <useSwitch>1</useSwitch>
+		<fnum>2.5</fnum>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='14'>cfunc</prompt>
+        <errors>
+            <errorEnt>
+                <errorStr>bad file</errorStr>
+                <errorMsg>Specified upgrade file was not found.</errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>bad file, install bit should be set</errorStr>
+                <errorMsg>The upgrade was specified as persistent, but the upgrade blob does not have the install bit set.</errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>bad file, install bit should not be set</errorStr>
+                <errorMsg>The upgrade was specified as nonpersistent, but the upgrade blob has the install bit set.</errorMsg>
+            </errorEnt>
+            <errorEnt>
+                <errorStr>missing file</errorStr>
+                <errorMsg>Upgrade file is missing.</errorMsg>
+            </errorEnt>
+        </errors>
+        <switch>
+            <sprompt>Enable Persistence?  Y/N: </sprompt>
+            <switchOpt>
+                <input>Yy</input>
+                <setValue value='1'>store</setValue>
+                <setValue value='1'>nextboot</setValue>
+            </switchOpt>
+            <switchOpt>
+                <input>Nn</input>
+                <setValue value='0'>store</setValue>
+                <setValue value='0'>nextboot</setValue>
+            </switchOpt>
+        </switch>
+		<prompt value='1'>now</prompt>
+		<prompt>nextboot</prompt>
+		<prompt>store</prompt>
+		<prompt value='1'>unload</prompt>
+		<prompt>upfile</prompt>
+		<helpUse>Usage: upgrade upfile &lt;Path to new implant blob&gt;</helpUse>
+		<helpText>The upgrade command is used to upgrade the implant to the new implant specified by upfile.</helpText>
+	</function>
+	
+	<function>
+		<name>shutdown</name>
+		<command>!call</command>
+		<noargs>1</noargs>
+		<fnum>2.6</fnum>
+		<nodisplay>true</nodisplay>
+		<prompt value='2'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='14'>cfunc</prompt>
+		<prompt value='0'>now</prompt>
+		<prompt value='1'>nextboot</prompt>
+		<prompt value='0'>store</prompt>
+		<prompt value='1'>unload</prompt>
+		<prompt value='none'>upfile</prompt>
+		<helpUse>Usage: shutdown</helpUse>
+		<helpText>Advanced command.  The shutdown command is used to terminate the implant.  Persistence and stores remain intact.</helpText>
+	</function>
+	
+</module>

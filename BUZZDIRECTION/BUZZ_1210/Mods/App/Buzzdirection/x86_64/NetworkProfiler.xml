@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>NetworkProfiler.mo</name>
+	<iface>33</iface>
+	<function>
+		<name>queryConfig</name>
+		<command>!call</command>
+		<fnum>33.1</fnum>
+		<prompt value='33'>ciface</prompt>
+		<prompt value='0'>cprov</prompt>
+		<prompt value='2'>cfunc</prompt>
+			<helpUse>Usage: queryConfig </helpUse>
+		<helpText>The queryConfig function is used to query config</helpText>
+	</function>
+	<function>
+		<name>scanStart</name>
+		<command>!call</command>
+		<fnum>33.2</fnum>
+		<prompt value='33'>ciface</prompt>
+		<prompt value='0'>cprov</prompt>
+		<prompt value='3'>cfunc</prompt>
+        <errors>
+            <errorEnt>
+                <errorStr>bad file</errorStr>
+                <errorMsg>Specified bpf file was not found.</errorMsg>
+            </errorEnt>
+        </errors>
+		<prompt>bpf</prompt>
+        <prompt>buckets</prompt>
+        <prompt>slicesize</prompt>
+        <prompt>numrecords</prompt>
+		<helpUse>Usage: scanStart bpf BPF_FILE buckets NUM_BUCKETS slicesize SIZEOFSLICE numrecords NUMRECORDS</helpUse>
+		<helpText>Given a precompiled BPF, it starts the scan and fills in a histogram of size buckets, each bucket accounts for slicesize seconds.  The total duration of the scan is buckets times slicesize.  Zero buckets disables the timeslot feature and the slicesize is the duration.  The numrecords is the max amount of records that will be collected, stats will still be collected once that value is reached, but no new records will be created</helpText>
+	</function>
+    <function>
+        <name>scanStop</name>
+        <command>!call</command>
+        <fnum>33.3</fnum>
+        <prompt value='33'>ciface</prompt>
+        <prompt value='0'>cprov</prompt>
+        <prompt value='4'>cfunc</prompt>
+        <helpUse>Usage: scanStop </helpUse>
+        <helpText>stops the scan</helpText>
+    </function>
+
+    <function>
+        <name>scanRestart</name>
+        <command>!call</command>
+        <fnum>33.4</fnum>
+        <prompt value='33'>ciface</prompt>
+        <prompt value='0'>cprov</prompt>
+        <prompt value='5'>cfunc</prompt>
+        <helpUse>Usage: scanRestart </helpUse>
+        <helpText>Restarts the scan</helpText>
+    </function>
+
+   <function>
+        <name>getRecords</name>
+        <command>!call</command>
+        <fnum>33.5</fnum>
+        <prompt value='33'>ciface</prompt>
+        <prompt value='0'>cprov</prompt>
+        <prompt value='6'>cfunc</prompt>
+        <helpUse>Usage: getRecords </helpUse>
+        <helpText>Gets the records</helpText>
+    </function>
+
+    <function>
+        <name>scanReset</name>
+        <command>!call</command>
+        <fnum>33.6</fnum>
+        <prompt value='33'>ciface</prompt>
+        <prompt value='0'>cprov</prompt>
+        <prompt value='7'>cfunc</prompt>
+        <helpUse>Usage: scanReset </helpUse>
+        <helpText>Reset the scan state</helpText>
+    </function>
+    <function>
+        <name>getStats</name>
+        <command>!call</command>
+        <fnum>33.7</fnum>
+        <prompt value='33'>ciface</prompt>
+        <prompt value='0'>cprov</prompt>
+        <prompt value='8'>cfunc</prompt>
+        <helpUse>Usage: getStats </helpUse>
+        <helpText>Get the scan state</helpText>
+    </function>
+
+</module>

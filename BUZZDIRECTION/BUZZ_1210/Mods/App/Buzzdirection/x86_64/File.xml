@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>File.mo</name>
+	<iface>39</iface>
+	
+	<function>
+		<name>listDir</name>
+		<command>!call</command>
+		<fnum>39.1</fnum>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='2'>cfunc</prompt>
+        <prompt>directory</prompt>
+        <helpUse>Usage: listDir [directory &lt;directory to list&gt;]</helpUse>
+		<helpText>The listDir command can be used to list the contents of a directory.  The information about each entry is printed in the following order:
+ Permissions UserIdNumber GroupIdNumber Size Atime Mtime Filename</helpText>
+	</function>
+
+    <function>
+		<name>get</name>
+		<command>!call</command>
+		<fnum>39.2</fnum>
+        <errorStr>File not found.</errorStr>
+        <useDefaultDir>destdir</useDefaultDir>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='3'>cfunc</prompt>
+        <prompt cprompt='Full path to file on target: '>filepath</prompt>
+        <prompt cprompt='Local destination directory: '>destdir</prompt>
+        <helpUse>Usage: get [filepath &lt;path to file to get&gt; destdir &lt;local destination directory&gt;]</helpUse>
+		<helpText>The get command can be used to retrieve a file.</helpText>
+	</function>
+
+    <function>
+		<name>abort</name>
+		<command>!call</command>
+		<fnum>39.3</fnum>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='4'>cfunc</prompt>
+        <prompt cprompt='Name of the file to abort: '>filename</prompt>
+        <helpUse>Usage: abort [filename &lt;Name of file to stop transfer of&gt;]</helpUse>
+		<helpText>The abort command can be used to cancel the transfer of a previously requested file.</helpText>
+	</function>
+
+    <function>
+		<name>put</name>
+		<command>!call</command>
+		<fnum>39.4</fnum>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='5'>cfunc</prompt>
+        <prompt cprompt='Full path to local file to send: '>filepath</prompt>
+        <prompt cprompt='Destination directory on target: '>destdir</prompt>
+        <prompt cprompt='User Permissions (0-7): '>userperms</prompt>
+        <prompt cprompt='Group Permissions (0-7): '>groupperms</prompt>
+        <prompt cprompt='Other Permissions (0-7): '>otherperms</prompt>
+        <helpUse>Usage: put [filepath &lt;path to file to send&gt; destdir &lt;directory to save file in&gt; userperms &lt;permissions (in octal) for user&gt; groupperms &lt;permissions (in octal) for group&gt; otherperms &lt;permissions (in octal) for others&gt;]</helpUse>
+		<helpText>The put command can be used to put a file on target.  The new file will be created with the permissions specified by the three permissions parameters.  The permissions should be supplied in octal: ie. 755</helpText>
+	</function>
+
+    <function>
+		<name>delete</name>
+		<command>!call</command>
+		<fnum>39.5</fnum>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='6'>cfunc</prompt>
+        <prompt cprompt='Full path to file to delete: '>filepath</prompt>
+        <helpUse>Usage: delete [filepath &lt;path to file to delete&gt;]</helpUse>
+		<helpText>The delete command can be used to delete a file on target.  Be extremely careful when deleting files.  Deleting the wrong file could brick the box!</helpText>
+	</function>
+
+    <function>
+		<name>status</name>
+		<command>!call</command>
+		<fnum>39.6</fnum>
+        <prompt value='39'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='7'>cfunc</prompt>
+        <helpUse>Usage: status </helpUse>
+		<helpText>The status command will display the progress of any active file transfers.</helpText>
+	</function>
+
+</module>

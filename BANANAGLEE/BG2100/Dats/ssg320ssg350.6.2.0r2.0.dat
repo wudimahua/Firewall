@@ -1,0 +1,70 @@
+;
+;
+;
+;
+0x261A0632                  
+0xffffffff                  
+0x0     0x004A8C70          
+0x1     0x004A8580          
+0x3     0x004A2AC0          
+0x6     0x00DF8740          
+0x7     0x00DF89D0          
+0x8     0x00125E50          
+0x9     0x00126610          
+0xa     0x00DF9040          
+0xf     0x00CB4F10          
+0x15    0x0010AC20          
+0x17    0x00109DB0          
+0x19    0x0011903D          
+0x20    0x00162620          
+0x21    0x00107510          
+0x22    0x01880948          
+0x24    0x00113429          
+0x28    0x019F9E8C          
+0x29    0x00A777C0          
+0x2f    0x01D09AB4          
+;
+0x30    0x00000018          
+0x31    0x00000034          
+0x32    0x00000094          
+0x33    0x00000000          
+0x34    0x00000070          
+0x35    0x01868024          
+0x3b    0x001AA1A0          
+0x3c    0x001AA4A0          
+0x3d    0x001A99D0          
+0x3e    0x001AA720          
+0x3f    0x00A7A690          
+;
+;
+;
+:EOS:
+;
+;
+;
+ArpTableAddrPtr      0x01D30DA0             
+ConfigAddr           0x01D3CC0C             
+PingPtr              0x018E4CD8             
+SafeSpace            0x00000000             
+CodeCkSum            0x6bd52253             
+ImgCkSum             0x6bd52253             
+Printf               0x00DF9040             
+Socket               0x004AF8B0             
+Bind                 0x004B04C0             
+Connect              0x004B3370             
+Send                 0x004B3490             
+Recv                 0x004B39E0             
+Close                0x004B3E70             
+Malloc               0x00125E50             
+Free                 0x00126610             
+Resched              0x00112AC0             
+TimeTablePtr         0x01DC6E30             
+CritTablePtr         0x01D46770             
+LogTablePtr          0x01D46760             
+LogOptsPtr           0x01D45130             
+;
+;
+:EOS:
+;
+;
+

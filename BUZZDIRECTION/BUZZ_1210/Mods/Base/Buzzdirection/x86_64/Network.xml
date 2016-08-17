@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<module>
+	<name>Network.mo</name>
+	<iface>17</iface>
+	
+	<function>
+		<name>addRoute</name>
+		<command>!call</command>
+		<fnum>17.19</fnum>
+		<prompt value='17'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='19'>cfunc</prompt>
+		<prompt>Network Address</prompt>
+		<prompt>Network Mask</prompt>
+		<prompt>Gateway Address</prompt>
+		<helpUse>Usage: addRoute</helpUse>
+		<helpText>The addRoute command is used to add a route entry to the BuzzNetwork routing engine.</helpText>
+	</function>
+	
+	<function>
+		<name>removeRoute</name>
+		<command>!call</command>
+		<fnum>17.20</fnum>
+		<prompt value='17'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='20'>cfunc</prompt>
+		<prompt>Network Address</prompt>
+		<prompt>Network Mask</prompt>
+		<prompt>Gateway Address</prompt>
+		<helpUse>Usage: removeRoute</helpUse>
+		<helpText>The removeRoute command is used to remove a route entry from the BuzzNetwork routing engine.</helpText>
+	</function>
+	
+	<function>
+		<name>listRoutes</name>
+		<command>!call</command>
+		<fnum>17.24</fnum>
+		<prompt value='17'>ciface</prompt>
+		<prompt value='1'>cprov</prompt>
+		<prompt value='24'>cfunc</prompt>
+		<helpUse>Usage: listRoutes</helpUse>
+		<helpText>The listRoutes command is used to get the route entries from the BuzzNetwork routing engine.</helpText>
+	</function>
+</module>

